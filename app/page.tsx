@@ -114,10 +114,12 @@ function SetupSection() {
     );
   }
 
-  const repoItems = repos.map((repo) => ({
-    value: repo.fullName,
-    label: repo.fullName,
-  }));
+  const repoItems = [...repos]
+    .sort((a, b) => a.fullName.localeCompare(b.fullName))
+    .map((repo) => ({
+      value: repo.fullName,
+      label: repo.fullName,
+    }));
 
   return (
     <div className="section">
@@ -131,6 +133,21 @@ function SetupSection() {
             placeholder={`Enter your ${aiProvider === "openai" ? "OpenAI" : "Anthropic"} API key`}
             disabled={loading}
           />
+          <p className="field-hint">
+            * Encrypted before storing in GitHub Secrets.{" "}
+            <a
+              href={selectedRepo 
+                ? `https://github.com/${selectedRepo}/settings/secrets/actions/new`
+                : "https://docs.github.com/en/actions/security-for-github-actions/security-guides/using-secrets-in-github-actions"
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="field-link"
+            >
+              Add it yourself
+            </a>{" "}
+            as <code className="field-code">{aiProvider === "openai" ? "OPENAI_API_KEY" : "ANTHROPIC_API_KEY"}</code>
+          </p>
         </div>
 
         <div className="field">
