@@ -28,6 +28,7 @@ export async function saveChangelogStep({ repoId, version, markdown, publishMode
     title,
     markdown,
     status,
+    type: "changelog",
   });
 
   return { postId: result.id, postSlug: result.slug };

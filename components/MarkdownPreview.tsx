@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
@@ -48,10 +48,13 @@ export function MarkdownPreview({ markdown }: Props) {
 
 function PreviewInitializer({ markdown }: { markdown: string }) {
   const [editor] = useLexicalComposerContext();
+  const lastValueRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (lastValueRef.current === markdown) return;
     editor.update(() => {
       $convertFromMarkdownString(markdown, TRANSFORMERS);
+      lastValueRef.current = markdown;
     });
   }, [editor, markdown]);
 

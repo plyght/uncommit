@@ -10,13 +10,21 @@ function createSlugBase(value: string) {
 }
 
 export const listChangelogsForRepo = query({
-  args: { repoId: v.id("repos") },
-  handler: async (ctx, { repoId }) => {
-    return await ctx.db.query("changelogs").withIndex("by_repo", (q) => q.eq("repoId", repoId)).collect();
+  args: { repoId: v.id("repos"), type: v.optional(v.string()) },
+  handler: async (ctx, { repoId, type }) => {
+    const normalizedType = type ?? "changelog";
+    if (normalizedType === "release") {
+      return await ctx.db
+        .query("changelogs")
+        .withIndex("by_repo_and_type", (q) => q.eq("repoId", repoId).eq("type", "release"))
+        .collect();
+    }
+    const entries = await ctx.db.query("changelogs").withIndex("by_repo", (q) => q.eq("repoId", repoId)).collect();
+    return entries.filter((entry) => (entry.type ?? "changelog") === "changelog");
   },
 });
 
-export const getPublicChangelogs = query({
+export const getPublicReleaseNotes = query({
   args: { slug: v.optional(v.string()), domain: v.optional(v.string()) },
   handler: async (ctx, { slug, domain }) => {
     const normalizedDomain = domain ? domain.toLowerCase() : undefined;
@@ -33,16 +41,18 @@ export const getPublicChangelogs = query({
 
     if (!repo) return null;
 
-    const changelogs = await ctx.db
+    const releaseNotes = await ctx.db
       .query("changelogs")
-      .withIndex("by_repo_and_status", (q) => q.eq("repoId", repo._id).eq("status", "published"))
+      .withIndex("by_repo_status_type", (q) =>
+        q.eq("repoId", repo._id).eq("status", "published").eq("type", "release")
+      )
       .collect();
 
-    return { repo, changelogs };
+    return { repo, releaseNotes };
   },
 });
 
-export const getPublicChangelog = query({
+export const getPublicReleaseNote = query({
   args: { slug: v.optional(v.string()), domain: v.optional(v.string()), postSlug: v.string() },
   handler: async (ctx, { slug, domain, postSlug }) => {
     const normalizedDomain = domain ? domain.toLowerCase() : undefined;
@@ -63,7 +73,7 @@ export const getPublicChangelog = query({
       .withIndex("by_repo_and_slug", (q) => q.eq("repoId", repo._id).eq("slug", postSlug))
       .unique();
 
-    if (!changelog || changelog.status !== "published") return null;
+    if (!changelog || changelog.status !== "published" || (changelog.type ?? "changelog") !== "release") return null;
     return { repo, changelog };
   },
 });
@@ -88,8 +98,9 @@ export const createChangelog = mutation({
     title: v.string(),
     markdown: v.string(),
     status: v.string(),
+    type: v.optional(v.string()),
   },
-  handler: async (ctx, { repoId, version, title, markdown, status }) => {
+  handler: async (ctx, { repoId, version, title, markdown, status, type }) => {
     const slug = `${createSlugBase(version)}-${createSlugBase(title)}`.replace(/-+/g, "-");
     const now = Date.now();
     const id = await ctx.db.insert("changelogs", {
@@ -98,6 +109,7 @@ export const createChangelog = mutation({
       title,
       markdown,
       status,
+      type: type ?? "changelog",
       slug,
       createdAt: now,
       updatedAt: now,
@@ -108,8 +120,8 @@ export const createChangelog = mutation({
 });
 
 export const updateChangelog = mutation({
-  args: { postId: v.id("changelogs"), title: v.string(), markdown: v.string() },
-  handler: async (ctx, { postId, title, markdown }) => {
+  args: { postId: v.id("changelogs"), title: v.string(), markdown: v.string(), type: v.optional(v.string()) },
+  handler: async (ctx, { postId, title, markdown, type }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       throw new Error("Unauthorized");
@@ -126,6 +138,7 @@ export const updateChangelog = mutation({
     await ctx.db.patch(postId, {
       title,
       markdown,
+      type: type ?? changelog.type ?? "changelog",
       slug,
       updatedAt: Date.now(),
     });

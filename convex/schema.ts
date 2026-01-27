@@ -49,6 +49,7 @@ export default defineSchema({
     title: v.string(),
     markdown: v.string(),
     status: v.string(),
+    type: v.optional(v.string()),
     slug: v.string(),
     createdAt: v.number(),
     updatedAt: v.number(),
@@ -56,5 +57,7 @@ export default defineSchema({
   })
     .index("by_repo", ["repoId"])
     .index("by_repo_and_status", ["repoId", "status"])
-    .index("by_repo_and_slug", ["repoId", "slug"]),
+    .index("by_repo_and_slug", ["repoId", "slug"])
+    .index("by_repo_and_type", ["repoId", "type"])
+    .index("by_repo_status_type", ["repoId", "status", "type"]),
 });

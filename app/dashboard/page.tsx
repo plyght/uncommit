@@ -122,6 +122,7 @@ export default function DashboardPage() {
               <RepoChangelogSection
                 repoId={activeRepoData._id}
                 repoName={`${activeRepoData.repoOwner}/${activeRepoData.repoName}`}
+                type={activeTab === "release" ? "release" : "changelog"}
               />
             ) : (
               <p className="text-[0.75rem] opacity-60">Select a repo or create a new project.</p>
@@ -133,8 +134,16 @@ export default function DashboardPage() {
   );
 }
 
-function RepoChangelogSection({ repoId, repoName }: { repoId: Id<"repos">; repoName: string }) {
-  const changelogs = useQuery(api.changelogs.listChangelogsForRepo, { repoId });
+function RepoChangelogSection({
+  repoId,
+  repoName,
+  type,
+}: {
+  repoId: Id<"repos">;
+  repoName: string;
+  type: "release" | "changelog";
+}) {
+  const changelogs = useQuery(api.changelogs.listChangelogsForRepo, { repoId, type });
   const publish = useMutation(api.changelogs.publishChangelog);
   const unpublish = useMutation(api.changelogs.unpublishChangelog);
   const remove = useMutation(api.changelogs.deleteChangelog);
@@ -152,7 +161,9 @@ function RepoChangelogSection({ repoId, repoName }: { repoId: Id<"repos">; repoN
     <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
       <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
       {changelogs.length === 0 ? (
-        <p className="text-[0.75rem] opacity-60">No changelogs yet.</p>
+        <p className="text-[0.75rem] opacity-60">
+          {type === "release" ? "No release notes yet." : "No changelogs yet."}
+        </p>
       ) : (
         <ul className="mt-4 flex flex-col gap-3">
           {changelogs.map((post) => (
