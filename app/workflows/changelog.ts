@@ -1,6 +1,5 @@
 import { detectVersionStep } from "@/app/steps/detectVersion";
 import { postGitHubCommentStep } from "@/app/steps/postGitHubComment";
-import { fetchDiffStep } from "@/app/steps/fetchDiff";
 import { generateChangelogStep } from "@/app/steps/generateChangelog";
 import { saveChangelogStep } from "@/app/steps/saveChangelog";
 import { updateGitHubCommentStep } from "@/app/steps/updateGitHubComment";
@@ -38,17 +37,10 @@ export async function changelogWorkflow(payload: WorkflowPayload) {
     version: detection.version,
   });
 
-  const diff = await fetchDiffStep({
-    installationId: payload.installationId,
-    repoOwner: payload.repoOwner,
-    repoName: payload.repoName,
-    baseSha: payload.beforeSha,
-    headSha: payload.afterSha,
-  });
-
   const markdown = await generateChangelogStep({
     version: detection.version,
-    diff,
+    beforeSha: payload.beforeSha,
+    afterSha: payload.afterSha,
   });
 
   const saved = await saveChangelogStep({

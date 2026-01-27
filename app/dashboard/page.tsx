@@ -51,6 +51,29 @@ export default function DashboardPage() {
       <aside className="dashboard-sidebar">
         <div>
           <div className="dashboard-brand">&lt;uncommit/&gt;</div>
+          <div className="dashboard-project">
+            <div className="label">Project</div>
+            <Select
+              items={projectItems}
+              value={activeRepo}
+              onValueChange={(value) => {
+                setActiveRepo(value);
+                if (activeTab !== "settings") {
+                  setActiveTab("release");
+                }
+              }}
+              placeholder="Select a repo"
+            />
+            <Button
+              className="dashboard-new"
+              onClick={() => {
+                setActiveRepo("");
+                setActiveTab("settings");
+              }}
+            >
+              New project
+            </Button>
+          </div>
           <nav className="dashboard-nav">
             <button
               type="button"
@@ -83,32 +106,6 @@ export default function DashboardPage() {
       </aside>
 
       <section className="dashboard-main">
-        <div className="dashboard-topbar">
-          <div className="project-switcher">
-            <div className="label">Project</div>
-            <Select
-              items={projectItems}
-              value={activeRepo}
-              onValueChange={(value) => {
-                setActiveRepo(value);
-                if (activeTab !== "settings") {
-                  setActiveTab("release");
-                }
-              }}
-              placeholder="Select a repo"
-            />
-          </div>
-          <Button
-            className="dashboard-new"
-            onClick={() => {
-              setActiveRepo("");
-              setActiveTab("settings");
-            }}
-          >
-            New project
-          </Button>
-        </div>
-
         {activeTab === "settings" ? (
           <div className="dashboard-panel">
             <h1 className="dashboard-title">Project settings</h1>
