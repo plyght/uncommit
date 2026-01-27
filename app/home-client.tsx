@@ -78,9 +78,9 @@ function SetupSection() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
-    if (currentUser?.githubAccessToken) {
+    if (currentUser) {
       setLoadingRepos(true);
-      fetchRepos({ accessToken: currentUser.githubAccessToken })
+      fetchRepos({})
         .then(setRepos)
         .catch((err) => {
           if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {

@@ -5,7 +5,7 @@ import { internal } from "./_generated/api";
 
 export const fetchUserRepos = action({
   args: {},
-  handler: async (ctx): Promise<Array<{ owner: string; name: string; fullName: string }>> => {
+  handler: async (ctx): Promise<Array<{ id: number; owner: string; name: string; fullName: string }>> => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       throw new Error("Unauthorized");
@@ -33,9 +33,10 @@ export const fetchUserRepos = action({
       throw new Error("Failed to fetch repositories");
     }
 
-    const repos: Array<{ owner: { login: string }; name: string; full_name: string }> = await response.json();
-    
+    const repos: Array<{ id: number; owner: { login: string }; name: string; full_name: string }> = await response.json();
+
     return repos.map((repo) => ({
+      id: repo.id,
       owner: repo.owner.login,
       name: repo.name,
       fullName: repo.full_name,
