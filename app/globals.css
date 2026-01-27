@@ -346,7 +346,6 @@ a.logo:hover {
 .plan-card {
   position: relative;
   padding: 0.75rem;
-  border-radius: var(--radius);
   border: 1px solid var(--card-border);
   background: var(--card-bg);
   text-align: left;
@@ -459,6 +458,44 @@ a.logo:hover {
   flex-direction: column;
   gap: 1rem;
   text-align: left;
+}
+
+.dashboard-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  background: var(--bg);
+}
+
+.dashboard-sidebar {
+  border-right: 1px solid var(--border);
+  padding: 1.5rem 1rem;
+}
+
+.dashboard-logo {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard-link {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.dashboard-link:hover {
+  opacity: 1;
+}
+
+.dashboard-main {
+  padding: 2rem;
 }
 
 .dashboard-card {

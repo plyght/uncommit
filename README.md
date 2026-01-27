@@ -32,6 +32,7 @@ Create a `.env.local` file with your Convex deployment URL and GitHub OAuth cred
 Required:
 - `CONVEX_URL`: Convex deployment URL for server-side queries
 - `NEXT_PUBLIC_CONVEX_URL`: Convex deployment URL for client-side queries
+- `SITE_URL`: Base URL of the Next.js app (e.g. http://localhost:3000)
 - `GITHUB_APP_ID`: GitHub App ID
 - `GITHUB_APP_PRIVATE_KEY`: GitHub App private key (escaped newlines as `\\n`)
 - `GITHUB_WEBHOOK_SECRET`: GitHub App webhook secret
