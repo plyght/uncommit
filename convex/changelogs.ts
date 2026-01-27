@@ -47,6 +47,14 @@ export const getPublicReleaseNotes = query({
 
     if (!repo) return null;
 
+    const publicRepo = {
+      slug: repo.slug,
+      customDomain: repo.customDomain,
+      repoOwner: repo.repoOwner,
+      repoName: repo.repoName,
+      domainStatus: repo.domainStatus,
+    };
+
     const releaseNotes = await ctx.db
       .query("changelogs")
       .withIndex("by_repo_status_type", (q) =>
@@ -54,7 +62,7 @@ export const getPublicReleaseNotes = query({
       )
       .collect();
 
-    return { repo, releaseNotes };
+    return { repo: publicRepo, releaseNotes };
   },
 });
 
@@ -74,13 +82,22 @@ export const getPublicReleaseNote = query({
         : null);
 
     if (!repo) return null;
+
+    const publicRepo = {
+      slug: repo.slug,
+      customDomain: repo.customDomain,
+      repoOwner: repo.repoOwner,
+      repoName: repo.repoName,
+      domainStatus: repo.domainStatus,
+    };
+
     const changelog = await ctx.db
       .query("changelogs")
       .withIndex("by_repo_and_slug", (q) => q.eq("repoId", repo._id).eq("slug", postSlug))
       .unique();
 
     if (!changelog || changelog.status !== "published" || (changelog.type ?? "changelog") !== "release") return null;
-    return { repo, changelog };
+    return { repo: publicRepo, changelog };
   },
 });
 

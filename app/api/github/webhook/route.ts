@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const payload = JSON.parse(rawBody) as {
+  let payload: {
     ref: string;
     before: string;
     after: string;
@@ -40,6 +40,13 @@ export async function POST(req: Request) {
     repository: { id: number; name: string; owner: { login: string }; default_branch: string };
     installation?: { id: number };
   };
+
+  try {
+    payload = JSON.parse(rawBody);
+  } catch (error) {
+    console.error("Failed to parse webhook payload:", error);
+    return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+  }
 
   const branch = payload.ref?.replace("refs/heads/", "");
   if (!branch || branch !== payload.repository.default_branch) {

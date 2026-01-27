@@ -35,15 +35,15 @@ export default function EditChangelogPage() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [mutationError, setMutationError] = useState<string | null>(null);
 
-  const publicUrl = useMemo(() => {
-    if (!data?.repo || !data?.changelog?.slug || postType !== "release") return "";
-    const domain = data.repo.customDomain?.trim();
-    if (domain) {
-      return `https://${domain}/${data.changelog.slug}`;
-    }
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
-    return `${baseUrl}/${data.repo.slug}/${data.changelog.slug}`;
-  }, [data]);
+   const publicUrl = useMemo(() => {
+     if (!data?.repo || !data?.changelog?.slug || postType !== "release") return "";
+     const domain = data.repo.customDomain?.trim();
+     if (domain) {
+       return `https://${domain}/${data.changelog.slug}`;
+     }
+     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? window.location.origin;
+     return `${baseUrl}/${data.repo.slug}/${data.changelog.slug}`;
+   }, [data, postType]);
 
   useEffect(() => {
     if (data?.changelog) {

@@ -81,22 +81,37 @@ async function detectVersionAtRef(
     return raw ? extractVersionFromJson(raw) : null;
   }
 
-  const packageJson = await getFileContent(installationId, repoOwner, repoName, "package.json", ref);
-  if (packageJson) return extractVersionFromJson(packageJson);
+   const packageJson = await getFileContent(installationId, repoOwner, repoName, "package.json", ref);
+   if (packageJson) {
+     const version = extractVersionFromJson(packageJson);
+     if (version) return version;
+   }
 
-  const cargoToml = await getFileContent(installationId, repoOwner, repoName, "Cargo.toml", ref);
-  if (cargoToml) return extractVersionFromToml(cargoToml);
+   const cargoToml = await getFileContent(installationId, repoOwner, repoName, "Cargo.toml", ref);
+   if (cargoToml) {
+     const version = extractVersionFromToml(cargoToml);
+     if (version) return version;
+   }
 
-  const pyproject = await getFileContent(installationId, repoOwner, repoName, "pyproject.toml", ref);
-  if (pyproject) return extractVersionFromToml(pyproject);
+   const pyproject = await getFileContent(installationId, repoOwner, repoName, "pyproject.toml", ref);
+   if (pyproject) {
+     const version = extractVersionFromToml(pyproject);
+     if (version) return version;
+   }
 
-  const versionTxt = await getFileContent(installationId, repoOwner, repoName, "version.txt", ref);
-  if (versionTxt) return extractVersionFromText(versionTxt);
+   const versionTxt = await getFileContent(installationId, repoOwner, repoName, "version.txt", ref);
+   if (versionTxt) {
+     const version = extractVersionFromText(versionTxt);
+     if (version) return version;
+   }
 
-  const versionFile = await getFileContent(installationId, repoOwner, repoName, "VERSION", ref);
-  if (versionFile) return extractVersionFromText(versionFile);
+   const versionFile = await getFileContent(installationId, repoOwner, repoName, "VERSION", ref);
+   if (versionFile) {
+     const version = extractVersionFromText(versionFile);
+     if (version) return version;
+   }
 
-  return null;
+   return null;
 }
 
 export async function detectVersionStep(payload: DetectPayload) {

@@ -50,9 +50,12 @@ export function RepoSetupForm({
           setMessage({ type: "error", text: "Failed to fetch repositories" });
         })
         .finally(() => setLoadingRepos(false));
-    } else {
-      setLoadingRepos(false);
-    }
+     } else {
+       setLoadingRepos(false);
+       setRepos([]);
+       setSetupSaved(false);
+       setMessage(null);
+     }
   }, [currentUser, fetchRepos, signOut]);
 
   useEffect(() => {
