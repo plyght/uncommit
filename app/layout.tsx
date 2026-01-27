@@ -2,9 +2,50 @@ import type { Metadata } from 'next';
 import { Providers } from './providers';
 import './globals.css';
 
+const siteUrl = 'https://uncommit.vercel.app';
+const title = '<uncommit/>';
+const description = 'AI-generated release notes from your code';
+
 export const metadata: Metadata = {
-  title: 'uncommit',
-  description: 'AI-generated release notes from your code',
+  title,
+  description,
+  metadataBase: new URL(siteUrl),
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-256.png', sizes: '256x256', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title,
+    description,
+    url: siteUrl,
+    siteName: 'uncommit',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'uncommit - AI-generated release notes',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

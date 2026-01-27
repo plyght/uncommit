@@ -1,0 +1,11 @@
+<svg width="160" height="32" viewBox="0 0 160 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+  </style>
+  <text x="0" y="22" class="logo-text" fill="currentColor">&lt;uncommit/&gt;</text>
+</svg>

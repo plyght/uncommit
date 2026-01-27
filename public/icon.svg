@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimal undo arrow for small sizes, centered -->
+  <path 
+    d="M6 12H18C21.314 12 24 14.686 24 18C24 21.314 21.314 24 18 24H12" 
+    stroke="currentColor" 
+    stroke-width="2.5"
+    fill="none"
+  />
+  <path 
+    d="M10 8L6 12L10 16" 
+    stroke="currentColor" 
+    stroke-width="2.5"
+    fill="none"
+  />
+</svg>

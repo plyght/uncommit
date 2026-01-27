@@ -5,7 +5,7 @@ export default function About() {
     <main className="page">
       <div className="container" style={{ maxWidth: "520px" }}>
         <header className="header">
-          <Link href="/" className="logo">uncommit</Link>
+          <Link href="/" className="logo">&lt;uncommit/&gt;</Link>
         </header>
 
         <div className="about-content">

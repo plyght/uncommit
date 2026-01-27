@@ -1,0 +1,18 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#000"/>
+  <style>
+    .og-title {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 72px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .og-tagline {
+      font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 28px;
+      font-weight: 400;
+    }
+  </style>
+  <text x="600" y="290" text-anchor="middle" class="og-title" fill="#fff">&lt;uncommit/&gt;</text>
+  <text x="600" y="360" text-anchor="middle" class="og-tagline" fill="#999">AI-generated release notes from your code</text>
+</svg>

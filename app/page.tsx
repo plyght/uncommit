@@ -13,7 +13,7 @@ export default function Home() {
     <main className="page">
       <div className="container">
         <header className="header">
-          <h1 className="logo">uncommit</h1>
+          <h1 className="logo">&lt;uncommit/&gt;</h1>
           <p className="tagline">AI-generated release notes from your code</p>
         </header>
 
