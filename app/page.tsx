@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
+import { encryptSecret } from "@/lib/encryption";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -68,6 +69,7 @@ function SetupSection() {
   const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser, isDev ? "skip" : undefined);
   const fetchRepos = useAction(api.github.fetchUserRepos);
+  const fetchRepoPublicKeyForClient = useAction(api.github.fetchRepoPublicKeyForClient);
   const installWorkflow = useAction(api.install.installWorkflow);
 
   const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string }>>(
@@ -82,9 +84,9 @@ function SetupSection() {
 
   useEffect(() => {
     if (isDev) return;
-    if (currentUser?.githubAccessToken) {
+    if (currentUser) {
       setLoadingRepos(true);
-      fetchRepos({ accessToken: currentUser.githubAccessToken })
+      fetchRepos({})
         .then(setRepos)
         .catch((err) => {
           if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {
@@ -100,6 +102,15 @@ function SetupSection() {
   const handleInstall = async () => {
     if (!selectedRepo || !apiKey) return;
 
+    const expectedPrefix = aiProvider === "anthropic" ? "sk-ant-" : "sk-proj-";
+    if (!apiKey.startsWith(expectedPrefix)) {
+      setMessage({
+        type: "error",
+        text: `Invalid API key format. ${aiProvider === "anthropic" ? "Anthropic" : "OpenAI"} keys should start with "${expectedPrefix}"`,
+      });
+      return;
+    }
+
     if (isDev) {
       setMessage({ type: "success", text: "Dev mode: Install simulated!" });
       return;
@@ -111,11 +122,19 @@ function SetupSection() {
     const [owner, name] = selectedRepo.split("/");
 
     try {
+      const { key: publicKey, keyId } = await fetchRepoPublicKeyForClient({
+        owner,
+        repo: name,
+      });
+
+      const encryptedApiKey = await encryptSecret(apiKey, publicKey);
+
       await installWorkflow({
         repoOwner: owner,
         repoName: name,
         aiProvider,
-        apiKey,
+        encryptedApiKey,
+        keyId,
       });
       setMessage({ type: "success", text: "Workflow installed successfully!" });
       setSelectedRepo("");

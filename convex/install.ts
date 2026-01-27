@@ -1,7 +1,6 @@
 import { action, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import { encryptSecret } from "./encryption";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 const WORKFLOW_ANTHROPIC = `name: AI Release Notes
@@ -403,44 +402,28 @@ export const installWorkflow = action({
     repoOwner: v.string(),
     repoName: v.string(),
     aiProvider: v.string(),
-    apiKey: v.string(),
+    encryptedApiKey: v.string(),
+    keyId: v.string(),
   },
-  handler: async (ctx, { repoOwner, repoName, aiProvider, apiKey }) => {
+  handler: async (ctx, { repoOwner, repoName, aiProvider, encryptedApiKey, keyId }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       throw new Error("Unauthorized");
     }
 
-    const user = await ctx.runQuery(api.users.getCurrentUser);
-    if (!user || !user.githubAccessToken) {
-      throw new Error("No GitHub access token found");
-    }
-
-    const accessToken = user.githubAccessToken;
-
-    const { key: publicKey, keyId } = await ctx.runAction(api.github.fetchRepoPublicKey, {
-      accessToken,
-      owner: repoOwner,
-      repo: repoName,
-    });
-
-    const encryptedValue = await encryptSecret(apiKey, publicKey);
-
     const secretName = aiProvider === "anthropic" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
 
     await ctx.runAction(api.github.createRepoSecret, {
-      accessToken,
       owner: repoOwner,
       repo: repoName,
       secretName,
-      encryptedValue,
+      encryptedValue: encryptedApiKey,
       keyId,
     });
 
     const workflowContent = aiProvider === "anthropic" ? WORKFLOW_ANTHROPIC : WORKFLOW_OPENAI;
 
     await ctx.runAction(api.github.createWorkflowFile, {
-      accessToken,
       owner: repoOwner,
       repo: repoName,
       content: workflowContent,

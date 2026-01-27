@@ -1,10 +1,24 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
+import { internal } from "./_generated/api";
 
 export const fetchUserRepos = action({
-  args: { accessToken: v.string() },
-  handler: async (_, { accessToken }) => {
-    const response = await fetch("https://api.github.com/user/repos?per_page=100&sort=updated", {
+  args: {},
+  handler: async (ctx): Promise<Array<{ owner: string; name: string; fullName: string }>> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.users.getUserWithToken);
+    if (!user || !user.githubAccessToken) {
+      throw new Error("No GitHub access token found");
+    }
+
+    const accessToken: string = user.githubAccessToken;
+
+    const response: Response = await fetch("https://api.github.com/user/repos?per_page=100&sort=updated", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         Accept: "application/vnd.github+json",
@@ -19,9 +33,9 @@ export const fetchUserRepos = action({
       throw new Error("Failed to fetch repositories");
     }
 
-    const repos = await response.json();
+    const repos: Array<{ owner: { login: string }; name: string; full_name: string }> = await response.json();
     
-    return repos.map((repo: { owner: { login: string }; name: string; full_name: string }) => ({
+    return repos.map((repo) => ({
       owner: repo.owner.login,
       name: repo.name,
       fullName: repo.full_name,
@@ -31,12 +45,23 @@ export const fetchUserRepos = action({
 
 export const fetchRepoPublicKey = action({
   args: {
-    accessToken: v.string(),
     owner: v.string(),
     repo: v.string(),
   },
-  handler: async (_, { accessToken, owner, repo }) => {
-    const response = await fetch(
+  handler: async (ctx, { owner, repo }): Promise<{ key: string; keyId: string }> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.users.getUserWithToken);
+    if (!user || !user.githubAccessToken) {
+      throw new Error("No GitHub access token found");
+    }
+
+    const accessToken: string = user.githubAccessToken;
+
+    const response: Response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`,
       {
         headers: {
@@ -51,22 +76,71 @@ export const fetchRepoPublicKey = action({
       throw new Error("Failed to fetch repository public key");
     }
 
-    const data = await response.json();
+    const data: { key: string; key_id: string } = await response.json();
+    return { key: data.key, keyId: data.key_id };
+  },
+});
+
+export const fetchRepoPublicKeyForClient = action({
+  args: {
+    owner: v.string(),
+    repo: v.string(),
+  },
+  handler: async (ctx, { owner, repo }): Promise<{ key: string; keyId: string }> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.users.getUserWithToken);
+    if (!user || !user.githubAccessToken) {
+      throw new Error("No GitHub access token found");
+    }
+
+    const accessToken: string = user.githubAccessToken;
+
+    const response: Response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/actions/secrets/public-key`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch repository public key");
+    }
+
+    const data: { key: string; key_id: string } = await response.json();
     return { key: data.key, keyId: data.key_id };
   },
 });
 
 export const createRepoSecret = action({
   args: {
-    accessToken: v.string(),
     owner: v.string(),
     repo: v.string(),
     secretName: v.string(),
     encryptedValue: v.string(),
     keyId: v.string(),
   },
-  handler: async (_, { accessToken, owner, repo, secretName, encryptedValue, keyId }) => {
-    const response = await fetch(
+  handler: async (ctx, { owner, repo, secretName, encryptedValue, keyId }): Promise<{ success: boolean }> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.users.getUserWithToken);
+    if (!user || !user.githubAccessToken) {
+      throw new Error("No GitHub access token found");
+    }
+
+    const accessToken: string = user.githubAccessToken;
+
+    const response: Response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/secrets/${secretName}`,
       {
         method: "PUT",
@@ -83,7 +157,7 @@ export const createRepoSecret = action({
     );
 
     if (!response.ok) {
-      const error = await response.text();
+      const error: string = await response.text();
       throw new Error(`Failed to create secret: ${error}`);
     }
 
@@ -93,18 +167,29 @@ export const createRepoSecret = action({
 
 export const createWorkflowFile = action({
   args: {
-    accessToken: v.string(),
     owner: v.string(),
     repo: v.string(),
     content: v.string(),
     aiProvider: v.string(),
   },
-  handler: async (_, { accessToken, owner, repo, content, aiProvider }) => {
+  handler: async (ctx, { owner, repo, content, aiProvider }): Promise<{ success: boolean }> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.runQuery(internal.users.getUserWithToken);
+    if (!user || !user.githubAccessToken) {
+      throw new Error("No GitHub access token found");
+    }
+
+    const accessToken: string = user.githubAccessToken;
+
     const path = ".github/workflows/ai-release.yml";
     const message = `Add AI release notes workflow (${aiProvider})`;
 
     let existingSha: string | undefined;
-    const getResponse = await fetch(
+    const getResponse: Response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
       {
         headers: {
@@ -116,11 +201,11 @@ export const createWorkflowFile = action({
     );
 
     if (getResponse.ok) {
-      const existing = await getResponse.json();
+      const existing: { sha: string } = await getResponse.json();
       existingSha = existing.sha;
     }
 
-    const putResponse = await fetch(
+    const putResponse: Response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/${path}`,
       {
         method: "PUT",
@@ -138,7 +223,7 @@ export const createWorkflowFile = action({
     );
 
     if (!putResponse.ok) {
-      const error = await putResponse.text();
+      const error: string = await putResponse.text();
       throw new Error(`Failed to create workflow file: ${error}`);
     }
 
