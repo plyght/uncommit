@@ -6,5 +6,5 @@
       font-weight: 600;
     }
   </style>
-  <text x="16" y="20" text-anchor="middle" class="fav-text" fill="currentColor">&lt;un↩/&gt;</text>
+  <text x="16" y="20" text-anchor="middle" class="fav-text" fill="#ffffff">&lt;un↩/&gt;</text>
 </svg>
