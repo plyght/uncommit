@@ -21,7 +21,8 @@ export const fetchUserRepos = action({
 
     const repos = await response.json();
     
-    return repos.map((repo: { owner: { login: string }; name: string; full_name: string }) => ({
+    return repos.map((repo: { id: number; owner: { login: string }; name: string; full_name: string }) => ({
+      id: repo.id,
       owner: repo.owner.login,
       name: repo.name,
       fullName: repo.full_name,

@@ -9,10 +9,12 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as changelogs from "../changelogs.js";
 import type * as encryption from "../encryption.js";
 import type * as github from "../github.js";
 import type * as http from "../http.js";
 import type * as install from "../install.js";
+import type * as repos from "../repos.js";
 import type * as users from "../users.js";
 
 import type {
@@ -23,10 +25,12 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  changelogs: typeof changelogs;
   encryption: typeof encryption;
   github: typeof github;
   http: typeof http;
   install: typeof install;
+  repos: typeof repos;
   users: typeof users;
 }>;
 
