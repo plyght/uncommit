@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $convertFromMarkdownString, TRANSFORMERS } from "@lexical/markdown";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
@@ -29,7 +30,11 @@ export function MarkdownPreview({ markdown }: Props) {
     <div className="markdown-preview">
       <LexicalComposer initialConfig={initialConfig}>
         <PreviewInitializer markdown={markdown} />
-        <RichTextPlugin contentEditable={<ContentEditable className="markdown-editor" />} placeholder={null} />
+        <RichTextPlugin
+          contentEditable={<ContentEditable className="markdown-editor" />}
+          placeholder={null}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
       </LexicalComposer>
     </div>
   );

@@ -350,7 +350,6 @@ a.logo:hover {
 .plan-card {
   position: relative;
   padding: 0.75rem;
-  border-radius: var(--radius);
   border: 1px solid var(--card-border);
   background: var(--card-bg);
   text-align: left;
