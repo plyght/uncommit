@@ -102,6 +102,13 @@ async function detectVersionAtRef(
 export async function detectVersionStep(payload: DetectPayload) {
   "use step";
 
+  const hasGitHubApp =
+    Boolean(process.env.GITHUB_APP_ID) && Boolean(process.env.GITHUB_APP_PRIVATE_KEY);
+
+  if (!hasGitHubApp || !payload.installationId) {
+    return { shouldRelease: true, version: "1.1" };
+  }
+
   const currentVersion = await detectVersionAtRef(
     payload.installationId,
     payload.repoOwner,
