@@ -12,6 +12,12 @@ function createSlugBase(value: string) {
 export const listChangelogsForRepo = query({
   args: { repoId: v.id("repos"), type: v.optional(v.string()) },
   handler: async (ctx, { repoId, type }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    const repo = await ctx.db.get(repoId);
+    if (!repo || repo.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
     const normalizedType = type ?? "changelog";
     if (normalizedType === "release") {
       return await ctx.db
@@ -101,6 +107,14 @@ export const createChangelog = mutation({
     type: v.optional(v.string()),
   },
   handler: async (ctx, { repoId, version, title, markdown, status, type }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    const repo = await ctx.db.get(repoId);
+    if (!repo || repo.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
     const slug = `${createSlugBase(version)}-${createSlugBase(title)}`.replace(/-+/g, "-");
     const now = Date.now();
     const id = await ctx.db.insert("changelogs", {

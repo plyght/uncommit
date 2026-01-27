@@ -1,19 +1,21 @@
 type GeneratePayload = {
   version: string;
+  previousVersion?: string;
   beforeSha: string;
   afterSha: string;
 };
 
-export async function generateChangelogStep({ version, beforeSha, afterSha }: GeneratePayload) {
+export async function generateChangelogStep({ version, previousVersion, beforeSha, afterSha }: GeneratePayload) {
   "use step";
 
   const shortBefore = beforeSha?.slice(0, 10) || "unknown";
   const shortAfter = afterSha?.slice(0, 10) || "unknown";
+  const prevLabel = previousVersion ? `v${previousVersion}` : "previous";
 
   return [
     `## Release summary (demo)`,
     ``,
-    `v1 commit id: ${shortBefore}`,
+    `${prevLabel} commit id: ${shortBefore}`,
     `v${version} commit id: ${shortAfter}`,
     ``,
     `## Features`,

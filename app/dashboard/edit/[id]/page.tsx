@@ -31,6 +31,9 @@ export default function EditChangelogPage() {
   const [markdown, setMarkdown] = useState("");
   const [postType, setPostType] = useState<"release" | "changelog">("changelog");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
   const publicUrl = useMemo(() => {
     if (!data?.repo || !data?.changelog?.slug || postType !== "release") return "";
@@ -135,12 +138,63 @@ export default function EditChangelogPage() {
             </div>
           </div>
 
+          {mutationError && (
+            <div className="text-[0.75rem] text-red-500">{mutationError}</div>
+          )}
           <div className="flex flex-wrap gap-3">
-            <Button onClick={() => void updateChangelog({ postId: post._id, title, markdown, type: postType })}>Save</Button>
+            <Button
+              disabled={isSaving}
+              onClick={async () => {
+                setMutationError(null);
+                setIsSaving(true);
+                try {
+                  await updateChangelog({ postId: post._id, title, markdown, type: postType });
+                } catch (error) {
+                  console.error("Failed to save changelog:", error);
+                  setMutationError(error instanceof Error ? error.message : "Failed to save changelog");
+                } finally {
+                  setIsSaving(false);
+                }
+              }}
+            >
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
             {post.status === "published" ? (
-              <Button onClick={() => void unpublish({ postId: post._id })}>Unpublish</Button>
+              <Button
+                disabled={isPublishing}
+                onClick={async () => {
+                  setMutationError(null);
+                  setIsPublishing(true);
+                  try {
+                    await unpublish({ postId: post._id });
+                  } catch (error) {
+                    console.error("Failed to unpublish:", error);
+                    setMutationError(error instanceof Error ? error.message : "Failed to unpublish");
+                  } finally {
+                    setIsPublishing(false);
+                  }
+                }}
+              >
+                {isPublishing ? "Unpublishing..." : "Unpublish"}
+              </Button>
             ) : (
-              <Button onClick={() => void publish({ postId: post._id })}>Publish</Button>
+              <Button
+                disabled={isPublishing}
+                onClick={async () => {
+                  setMutationError(null);
+                  setIsPublishing(true);
+                  try {
+                    await publish({ postId: post._id });
+                  } catch (error) {
+                    console.error("Failed to publish:", error);
+                    setMutationError(error instanceof Error ? error.message : "Failed to publish");
+                  } finally {
+                    setIsPublishing(false);
+                  }
+                }}
+              >
+                {isPublishing ? "Publishing..." : "Publish"}
+              </Button>
             )}
             <Button
               className="border border-[var(--border)] bg-transparent text-[var(--fg)] hover:bg-[var(--gray-100)]"

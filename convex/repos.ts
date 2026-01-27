@@ -1,10 +1,18 @@
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 function normalizeDomain(domain?: string) {
   if (!domain) return undefined;
-  return domain.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+  const trimmed = domain.trim();
+  if (!trimmed) return undefined;
+  try {
+    const urlStr = trimmed.includes("://") ? trimmed : `https://${trimmed}`;
+    const url = new URL(urlStr);
+    return url.hostname.toLowerCase();
+  } catch {
+    return undefined;
+  }
 }
 
 function createSlugBase(name: string) {
@@ -82,8 +90,7 @@ export const saveRepoSettings = mutation({
 
     const now = Date.now();
     if (existing) {
-      await ctx.db.patch(existing._id, {
-        githubRepoId,
+      const patchData: Record<string, unknown> = {
         planType,
         customDomain: normalizedDomain,
         domainStatus: normalizedDomain ? "pending" : undefined,
@@ -91,7 +98,11 @@ export const saveRepoSettings = mutation({
         versionStrategy,
         publishMode,
         updatedAt: now,
-      });
+      };
+      if (githubRepoId !== undefined) {
+        patchData.githubRepoId = githubRepoId;
+      }
+      await ctx.db.patch(existing._id, patchData);
       return existing._id;
     }
 
@@ -114,7 +125,7 @@ export const saveRepoSettings = mutation({
   },
 });
 
-export const bindInstallationToRepo = mutation({
+export const bindInstallationToRepo = internalMutation({
   args: {
     githubRepoId: v.number(),
     installationId: v.number(),

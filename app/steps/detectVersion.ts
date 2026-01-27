@@ -106,7 +106,7 @@ export async function detectVersionStep(payload: DetectPayload) {
     Boolean(process.env.GITHUB_APP_ID) && Boolean(process.env.GITHUB_APP_PRIVATE_KEY);
 
   if (!hasGitHubApp || !payload.installationId) {
-    return { shouldRelease: true, version: "1.1" };
+    return { shouldRelease: false };
   }
 
   const currentVersion = await detectVersionAtRef(
@@ -125,15 +125,15 @@ export async function detectVersionStep(payload: DetectPayload) {
   );
 
   if (!currentVersion || currentVersion === previousVersion) {
-    return { shouldRelease: false, version: currentVersion ?? "" };
+    return { shouldRelease: false, version: currentVersion ?? "", previousVersion: previousVersion ?? undefined };
   }
 
   if (payload.versionStrategy === "major-only") {
     const isMajor = previousVersion ? isMajorIncrease(previousVersion, currentVersion) : true;
     if (!isMajor) {
-      return { shouldRelease: false, version: currentVersion };
+      return { shouldRelease: false, version: currentVersion, previousVersion: previousVersion ?? undefined };
     }
   }
 
-  return { shouldRelease: true, version: currentVersion };
+  return { shouldRelease: true, version: currentVersion, previousVersion: previousVersion ?? undefined };
 }

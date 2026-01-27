@@ -20,7 +20,11 @@ export async function POST(req: Request) {
   const event = headers().get("x-github-event");
   const rawBody = await req.text();
 
-  if (!verifyGitHubWebhookSignature(rawBody, signature)) {
+  try {
+    if (!verifyGitHubWebhookSignature(rawBody, signature)) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+  } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -32,12 +36,17 @@ export async function POST(req: Request) {
     ref: string;
     before: string;
     after: string;
+    deleted?: boolean;
     repository: { id: number; name: string; owner: { login: string }; default_branch: string };
     installation?: { id: number };
   };
 
   const branch = payload.ref?.replace("refs/heads/", "");
   if (!branch || branch !== payload.repository.default_branch) {
+    return NextResponse.json({ ok: true });
+  }
+
+  if (payload.deleted === true || payload.after === "0000000000000000000000000000000000000000") {
     return NextResponse.json({ ok: true });
   }
 

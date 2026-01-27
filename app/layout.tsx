@@ -9,7 +9,12 @@ const description = "AI-generated release notes from your code";
 
 const getSiteUrl = () => {
   const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_BASE_URL;
-  if (envUrl) return envUrl;
+  if (envUrl) {
+    if (envUrl.startsWith("http://") || envUrl.startsWith("https://")) {
+      return envUrl;
+    }
+    return `https://${envUrl}`;
+  }
 
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;

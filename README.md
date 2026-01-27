@@ -37,7 +37,7 @@ Required:
 - `GITHUB_WEBHOOK_SECRET`: GitHub App webhook secret
 - `NEXT_PUBLIC_GITHUB_APP_INSTALL_URL`: Link to install the GitHub App
 - `OPENAI_API_KEY`: OpenAI API key used by workflows
-- `NEXT_PUBLIC_APP_URL`: Base URL for dashboard links (e.g. https://app.uncommit.com)
+- `NEXT_PUBLIC_APP_URL`: Base URL for dashboard links (e.g., `<https://app.uncommit.com>`)
 - `NEXT_PUBLIC_APP_DOMAIN`: Primary app domain (used to detect custom domain requests)
 
 ## Usage
@@ -84,6 +84,7 @@ The installed workflow monitors these version files:
 - `Cargo.toml` (Rust)
 - `pyproject.toml` (Python)
 - `version.txt` / `VERSION` (Generic)
+- `uncommit.json` (Uncommit)
 
 AI prompts are configured to produce:
 - No emojis

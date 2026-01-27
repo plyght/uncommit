@@ -18,7 +18,12 @@ export function verifyGitHubWebhookSignature(rawBody: string, signatureHeader: s
   if (!signatureHeader) return false;
 
   const expected = `sha256=${crypto.createHmac("sha256", secret).update(rawBody).digest("hex")}`;
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signatureHeader));
+  const expectedBuffer = Buffer.from(expected);
+  const signatureBuffer = Buffer.from(signatureHeader);
+  if (expectedBuffer.length !== signatureBuffer.length) {
+    return false;
+  }
+  return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
 }
 
 export async function getInstallationOctokit(installationId: number) {

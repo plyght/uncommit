@@ -39,6 +39,7 @@ export async function changelogWorkflow(payload: WorkflowPayload) {
 
   const markdown = await generateChangelogStep({
     version: detection.version,
+    previousVersion: detection.previousVersion,
     beforeSha: payload.beforeSha,
     afterSha: payload.afterSha,
   });
@@ -51,6 +52,10 @@ export async function changelogWorkflow(payload: WorkflowPayload) {
   });
 
   const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_BASE_URL || "";
+  if (!payload.customDomain && !appBaseUrl) {
+    return { skipped: true, reason: "No app base URL or custom domain configured" };
+  }
+
   const publicLink =
     payload.publishMode === "auto"
       ? payload.customDomain

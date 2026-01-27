@@ -7,6 +7,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $convertFromMarkdownString, TRANSFORMERS } from "@lexical/markdown";
+import { $getRoot } from "lexical";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeNode } from "@lexical/code";
@@ -53,6 +54,8 @@ function PreviewInitializer({ markdown }: { markdown: string }) {
   useEffect(() => {
     if (lastValueRef.current === markdown) return;
     editor.update(() => {
+      const root = $getRoot();
+      root.clear();
       $convertFromMarkdownString(markdown, TRANSFORMERS);
       lastValueRef.current = markdown;
     });
