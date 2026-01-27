@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { Providers } from "./providers";
 import "./globals.css";
 
-const productionUrl = "https://peril.lol";
+const productionUrl = "https://0ni.uncommit.sh";
 const title = "<uncommit/>";
 const description = "AI-generated release notes from your code";
 

@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { verifyGitHubWebhookSignature } from "@/lib/githubApp";
-import { startWorkflow } from "workflow";
+import { start } from "workflow/runtime";
 import { changelogWorkflow } from "@/app/workflows/changelog";
 
 export const runtime = "nodejs";
@@ -71,7 +71,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, skipped: "missing_installation" });
   }
 
-  await startWorkflow(changelogWorkflow, {
+  await start(changelogWorkflow, [
+    {
     repoId: repo._id,
     githubRepoId: payload.repository.id,
     repoOwner: payload.repository.owner.login,
@@ -85,7 +86,8 @@ export async function POST(req: Request) {
     planType: repo.planType,
     slug: repo.slug,
     customDomain: repo.customDomain,
-  });
+    },
+  ]);
 
   return NextResponse.json({ ok: true });
 }
