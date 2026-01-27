@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV === 'development';
+const basePath = isDev ? '' : '/uncommit';
+
 const nextConfig = {
   reactStrictMode: true,
-  basePath: '/uncommit',
-  assetPrefix: '/uncommit',
+  ...(basePath && { basePath, assetPrefix: basePath }),
 }
 
 module.exports = nextConfig

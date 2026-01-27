@@ -9,6 +9,8 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default function Home() {
   return (
     <main className="page">
@@ -18,13 +20,18 @@ export default function Home() {
           <p className="tagline">AI-generated release notes from your code</p>
         </header>
 
-        <Unauthenticated>
-          <LoginSection />
-        </Unauthenticated>
-
-        <Authenticated>
+        {isDev ? (
           <SetupSection />
-        </Authenticated>
+        ) : (
+          <>
+            <Unauthenticated>
+              <LoginSection />
+            </Unauthenticated>
+            <Authenticated>
+              <SetupSection />
+            </Authenticated>
+          </>
+        )}
       </div>
     </main>
   );
@@ -59,19 +66,22 @@ function LoginSection() {
 
 function SetupSection() {
   const { signOut } = useAuthActions();
-  const currentUser = useQuery(api.users.getCurrentUser);
+  const currentUser = useQuery(api.users.getCurrentUser, isDev ? "skip" : undefined);
   const fetchRepos = useAction(api.github.fetchUserRepos);
   const installWorkflow = useAction(api.install.installWorkflow);
 
-  const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string }>>([]);
+  const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string }>>(
+    isDev ? [{ owner: "dev", name: "test-repo", fullName: "dev/test-repo" }] : []
+  );
   const [selectedRepo, setSelectedRepo] = useState("");
   const [aiProvider, setAiProvider] = useState<"openai" | "anthropic">("openai");
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loadingRepos, setLoadingRepos] = useState(true);
+  const [loadingRepos, setLoadingRepos] = useState(!isDev);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
+    if (isDev) return;
     if (currentUser?.githubAccessToken) {
       setLoadingRepos(true);
       fetchRepos({ accessToken: currentUser.githubAccessToken })
@@ -89,6 +99,11 @@ function SetupSection() {
 
   const handleInstall = async () => {
     if (!selectedRepo || !apiKey) return;
+
+    if (isDev) {
+      setMessage({ type: "success", text: "Dev mode: Install simulated!" });
+      return;
+    }
 
     setLoading(true);
     setMessage(null);
@@ -115,7 +130,7 @@ function SetupSection() {
     }
   };
 
-  if (currentUser === undefined) {
+  if (!isDev && currentUser === undefined) {
     return (
       <div className="section">
         <p className="loading">Loading...</p>

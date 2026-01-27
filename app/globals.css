@@ -12,6 +12,8 @@
   --gray-200: oklch(90% 0 0);
   --gray-300: oklch(82% 0 0);
   --gray-600: oklch(45% 0 0);
+  --accent: oklch(55% 0.12 250);
+  --accent-subtle: oklch(92% 0.03 250);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +31,8 @@
     --gray-200: oklch(25% 0 0);
     --gray-300: oklch(35% 0 0);
     --gray-600: oklch(65% 0 0);
+    --accent: oklch(70% 0.12 250);
+    --accent-subtle: oklch(20% 0.03 250);
   }
 }
 
@@ -147,6 +151,7 @@ a.logo:hover {
 
 .field-link:hover {
   opacity: 1;
+  color: var(--accent);
 }
 
 .field-code {
@@ -220,7 +225,7 @@ a.logo:hover {
 }
 
 .select-trigger:focus-visible {
-  border-color: var(--fg);
+  border-color: var(--accent);
 }
 
 .select-trigger[data-popup-open] {
@@ -302,6 +307,7 @@ a.logo:hover {
 
 .select-item[data-selected] {
   font-weight: 500;
+  color: var(--accent);
 }
 
 .select-item-indicator {
@@ -360,7 +366,7 @@ a.logo:hover {
 }
 
 .input:focus {
-  border-color: var(--fg);
+  border-color: var(--accent);
 }
 
 .input:disabled {
