@@ -90,7 +90,7 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light dark" />
       </head>
-      <body className="min-h-screen bg-[var(--bg)] text-[var(--fg)] antialiased">
+      <body>
         <Providers>{children}</Providers>
         <Analytics />
       </body>

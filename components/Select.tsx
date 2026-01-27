@@ -32,26 +32,26 @@ export function Select({ items, value, onValueChange, placeholder = "Select...",
       onValueChange={handleValueChange(onValueChange)}
       disabled={disabled}
     >
-      <BaseSelect.Trigger className="flex h-9 w-full items-center justify-between gap-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--input-bg)] px-3 text-[0.75rem] text-[var(--fg)] transition-colors hover:border-[var(--fg)]">
-        <BaseSelect.Value className="truncate text-left" placeholder={placeholder} />
-        <BaseSelect.Icon className="text-[var(--fg)]/70">
+      <BaseSelect.Trigger className="flex h-[2.25rem] w-full cursor-pointer select-none items-center justify-between gap-[0.5rem] border border-[var(--border)] bg-[var(--input-bg)] px-[0.625rem] text-[0.75rem] text-[var(--fg)] outline-none transition-[border-color] duration-[0.15s] hover:border-[var(--fg)] focus-visible:border-[var(--accent)] data-[disabled]:cursor-not-allowed data-[popup-open]:border-[var(--fg)] data-[disabled]:opacity-40 data-[disabled]:hover:border-[var(--border)]">
+        <BaseSelect.Value className="min-w-0 flex-1 truncate text-left data-[placeholder]:opacity-50" placeholder={placeholder} />
+        <BaseSelect.Icon className="flex shrink-0 opacity-50">
           <ChevronIcon />
         </BaseSelect.Icon>
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
-        <BaseSelect.Positioner className="z-50" sideOffset={8}>
-          <BaseSelect.Popup className="w-[var(--base-select-trigger-width)] rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-1 shadow-[var(--shadow)]">
-            <BaseSelect.List className="max-h-64 overflow-auto">
+        <BaseSelect.Positioner className="z-50 outline-none" sideOffset={8}>
+          <BaseSelect.Popup className="min-w-[var(--anchor-width)] w-max max-w-[90vw] max-h-[300px] overflow-y-auto origin-[var(--transform-origin)] border border-[var(--border)] bg-[var(--input-bg)] text-[var(--fg)] transition-[transform,opacity] duration-[0.15s] data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+            <BaseSelect.List>
               {items.map((item) => (
                 <BaseSelect.Item
                   key={item.value}
                   value={item.value}
-                  className="flex cursor-pointer items-center gap-2 rounded-[var(--radius)] px-2 py-1.5 text-[0.75rem] text-[var(--fg)] transition-colors data-[highlighted]:bg-[var(--gray-100)] data-[selected]:text-[var(--accent)]"
+                  className="grid cursor-pointer select-none grid-cols-[0.75rem_1fr] items-center gap-[0.375rem] px-[0.625rem] py-[0.5rem] text-[0.75rem] outline-none data-[highlighted]:bg-[var(--gray-100)] data-[selected]:font-medium data-[selected]:text-[var(--accent)]"
                 >
-                  <BaseSelect.ItemIndicator className="flex h-4 w-4 items-center justify-center">
+                  <BaseSelect.ItemIndicator className="flex items-center justify-center">
                     <CheckIcon />
                   </BaseSelect.ItemIndicator>
-                  <BaseSelect.ItemText className="truncate">
+                  <BaseSelect.ItemText className="whitespace-nowrap">
                     {item.label}
                   </BaseSelect.ItemText>
                 </BaseSelect.Item>
