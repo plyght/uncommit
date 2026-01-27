@@ -4,9 +4,10 @@ import { fetchDiffStep } from "@/app/steps/fetchDiff";
 import { generateChangelogStep } from "@/app/steps/generateChangelog";
 import { saveChangelogStep } from "@/app/steps/saveChangelog";
 import { updateGitHubCommentStep } from "@/app/steps/updateGitHubComment";
+import type { Id } from "@/convex/_generated/dataModel";
 
 type WorkflowPayload = {
-  repoId: string;
+  repoId: Id<"repos">;
   githubRepoId: number;
   repoOwner: string;
   repoName: string;
