@@ -1,4 +1,4 @@
-import { internalMutation, mutation, query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -125,7 +125,7 @@ export const saveRepoSettings = mutation({
   },
 });
 
-export const bindInstallationToRepo = internalMutation({
+export const bindInstallationToRepo = mutation({
   args: {
     githubRepoId: v.number(),
     installationId: v.number(),
