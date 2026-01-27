@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Providers } from './providers';
 import './globals.css';
 
-const siteUrl = 'https://uncommit.vercel.app';
+const siteUrl = 'https://peril.lol/uncommit';
 const title = '<uncommit/>';
 const description = 'AI-generated release notes from your code';
 
@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/favicon-256.png', sizes: '256x256', type: 'image/png' },
+      { url: '/uncommit/favicon.ico', sizes: 'any' },
+      { url: '/uncommit/favicon.svg', type: 'image/svg+xml' },
+      { url: '/uncommit/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/uncommit/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/uncommit/favicon-256.png', sizes: '256x256', type: 'image/png' },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: '/uncommit/apple-touch-icon.png',
   },
   openGraph: {
     title,

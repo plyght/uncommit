@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Authenticated, Unauthenticated, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -50,7 +51,7 @@ function LoginSection() {
         Sign in with GitHub
       </Button>
       <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
-        <a href="/about" className="field-link">What is this?</a>
+        <Link href="/about" className="field-link">What is this?</Link>
       </p>
     </div>
   );
@@ -213,7 +214,7 @@ function SetupSection() {
           {loading ? "Installing..." : "Install Workflow"}
         </Button>
         <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
-          <a href="/about" className="field-link">What is this?</a>
+          <Link href="/about" className="field-link">What is this?</Link>
         </p>
       </div>
     </div>
