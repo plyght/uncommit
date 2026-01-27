@@ -1,81 +1,98 @@
-# uncommit
+# Uncommit
 
-AI-generated release notes from your code. Connect GitHub, select a repo, enter your API key, and we'll install a workflow that automatically generates release notes when you bump versions.
+Automated AI-generated release notes from your code. Uncommit installs a GitHub Actions workflow that detects version bumps and creates intelligent release notes by analyzing your diffs.
 
-## Stack
+## Overview
 
-- Next.js 14+ (App Router)
-- Convex (auth, database, functions)
-- @convex-dev/auth (GitHub OAuth)
-- TweetNaCl (encryption for GitHub secrets)
+Uncommit eliminates the tedium of writing release notes. When you bump your version and push to main, the installed workflow detects the change, analyzes your code diff since the last tag, and generates concise, user-facing release notes using your choice of AI provider.
 
-## Setup
+## Features
 
-### 1. Install dependencies
+- **Automatic Version Detection**: Supports package.json, Cargo.toml, pyproject.toml, version.txt, and VERSION files
+- **Intelligent Diff Analysis**: Analyzes code changes across 14+ file types to generate meaningful notes
+- **Multi-Provider Support**: Works with OpenAI or Anthropic APIs
+- **Secure Key Storage**: API keys are encrypted client-side using NaCl before being stored as GitHub secrets
+- **Zero Configuration**: One-click install per repository, no manual workflow editing required
+- **Tag Management**: Automatically creates version tags and GitHub releases
+
+## Installation
 
 ```bash
+git clone https://github.com/plyght/uncommit.git
+cd uncommit
 bun install
-```
 
-### 2. Initialize Convex
-
-```bash
+# Set up Convex backend
 bunx convex dev
 ```
 
-Follow prompts to create/link a Convex project. This will output your `NEXT_PUBLIC_CONVEX_URL`.
+Create a `.env.local` file with your Convex deployment URL and GitHub OAuth credentials.
 
-### 3. Create `.env.local`
+## Usage
 
-```bash
-cp .env.local.example .env.local
+1. Navigate to the web interface and authenticate with GitHub
+2. Select a repository from your account
+3. Choose your AI provider (OpenAI or Anthropic)
+4. Enter your API key
+5. Click Install
+
+The workflow activates on pushes to main/master when version files change. Version bump detected triggers the release flow automatically.
+
+## How It Works
+
+```
+Version Bump → Push to Main → Workflow Triggered
+                                    ↓
+                            Detect Version Change
+                                    ↓
+                            Generate Diff (since last tag)
+                                    ↓
+                            Send to AI Provider
+                                    ↓
+                            Create Tag + Release
 ```
 
-Add your `NEXT_PUBLIC_CONVEX_URL` from the previous step.
+The generated workflow:
+- Compares current version against previous commit
+- Fetches code diff since last tag (or initial commit)
+- Sends diff to AI with structured prompts for release note generation
+- Creates a git tag and GitHub release with the generated notes
 
-### 4. Configure GitHub OAuth
+## Architecture
 
-1. Go to https://github.com/settings/developers
-2. Click "New OAuth App"
-3. Fill in:
-   - **Application name**: uncommit (or whatever you want)
-   - **Homepage URL**: `http://localhost:3000`
-   - **Authorization callback URL**: Your Convex HTTP Actions URL + `/api/auth/callback/github`
-     - Find your HTTP Actions URL in [Convex Dashboard](https://dashboard.convex.dev) → Settings → URL & Deploy Key
-     - It looks like: `https://your-deployment.convex.site`
-     - Full callback: `https://your-deployment.convex.site/api/auth/callback/github`
-4. Click "Register application"
-5. Copy the **Client ID** and generate a **Client Secret**
+- `app/page.tsx`: Landing page with GitHub OAuth
+- `app/dashboard/page.tsx`: Repository selection and workflow installation
+- `convex/auth.ts`: GitHub OAuth configuration with repo/workflow scopes
+- `convex/github.ts`: GitHub API interactions (repos, secrets, workflow files)
+- `convex/install.ts`: Workflow templates and installation logic
+- `convex/encryption.ts`: NaCl-based secret encryption for GitHub Actions secrets
 
-Set them in Convex:
+## Configuration
+
+The installed workflow monitors these version files:
+- `package.json` (Node.js)
+- `Cargo.toml` (Rust)
+- `pyproject.toml` (Python)
+- `version.txt` / `VERSION` (Generic)
+
+AI prompts are configured to produce:
+- No emojis
+- No title (GitHub displays it)
+- Markdown headers: Features, Fixes, Improvements, Breaking Changes
+- User-facing changes only
+
+## Development
 
 ```bash
-npx convex env set AUTH_GITHUB_ID <your-client-id>
-npx convex env set AUTH_GITHUB_SECRET <your-client-secret>
+# Start Next.js dev server
+bun run dev
+
+# Start Convex backend
+bun run convex:dev
 ```
 
-### 5. Run development server
+Requires Bun runtime. Key dependencies: Next.js 14, Convex, @convex-dev/auth, tweetnacl.
 
-```bash
-bun dev
-```
+## License
 
-Visit http://localhost:3000
-
-## How it works
-
-1. User clicks "Connect GitHub" → GitHub OAuth via Convex Auth
-2. After auth, user selects a repository from their GitHub account
-3. User chooses AI provider (OpenAI or Anthropic) and enters their API key
-4. We encrypt the API key and push it as a GitHub secret
-5. We push a workflow YAML that triggers on version bumps in package.json, Cargo.toml, pyproject.toml, etc.
-6. When they bump a version and push, the workflow generates AI release notes
-
-## Production
-
-For production deployment:
-
-1. Create a separate GitHub OAuth App with production URLs
-2. Set the callback URL to your production Convex HTTP Actions URL
-3. Set production env vars: `npx convex env set --prod AUTH_GITHUB_ID ...`
-4. Deploy to Vercel or your preferred host
+MIT License
