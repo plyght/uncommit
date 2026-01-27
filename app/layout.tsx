@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
 import "./styles.css";
 
@@ -91,6 +92,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-[var(--bg)] text-[var(--fg)] antialiased">
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );

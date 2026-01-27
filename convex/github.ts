@@ -2,6 +2,7 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { internal } from "./_generated/api";
+import sodium from "libsodium-wrappers";
 
 export const fetchUserRepos = action({
   args: {},
@@ -186,6 +187,8 @@ export const createWorkflowFile = action({
 
     const accessToken: string = user.githubAccessToken;
 
+    await sodium.ready;
+
     const path = ".github/workflows/ai-release.yml";
     const message = `Add AI release notes workflow (${aiProvider})`;
 
@@ -217,7 +220,7 @@ export const createWorkflowFile = action({
         },
         body: JSON.stringify({
           message,
-          content: Buffer.from(content).toString("base64"),
+          content: sodium.to_base64(sodium.from_string(content), sodium.base64_variants.ORIGINAL),
           ...(existingSha && { sha: existingSha }),
         }),
       }

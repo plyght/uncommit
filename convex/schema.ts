@@ -60,4 +60,20 @@ export default defineSchema({
     .index("by_repo_and_slug", ["repoId", "slug"])
     .index("by_repo_and_type", ["repoId", "type"])
     .index("by_repo_status_type", ["repoId", "status", "type"]),
+  subscriptions: defineTable({
+    email: v.string(),
+    kofiTransactionId: v.string(),
+    type: v.string(),
+    tierName: v.optional(v.string()),
+    isFirstSubscription: v.boolean(),
+    isSubscriptionPayment: v.boolean(),
+    amount: v.string(),
+    currency: v.string(),
+    kofiFromName: v.string(),
+    message: v.optional(v.string()),
+    isPublic: v.boolean(),
+    timestamp: v.number(),
+  })
+    .index("by_email", ["email"])
+    .index("by_transaction", ["kofiTransactionId"]),
 });
