@@ -1,0 +1,64 @@
+:root {
+  --bg: #fafafa;
+  --fg: #0a0a0a;
+  --border: #e5e5e5;
+  --input-bg: #ffffff;
+  --button-bg: #0a0a0a;
+  --button-fg: #fafafa;
+  --button-hover: #1a1a1a;
+  --error: #dc2626;
+  --success: #16a34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0a0a;
+    --fg: #fafafa;
+    --border: #2a2a2a;
+    --input-bg: #1a1a1a;
+    --button-bg: #fafafa;
+    --button-fg: #0a0a0a;
+    --button-hover: #e5e5e5;
+    --error: #ef4444;
+    --success: #22c55e;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--fg);
+  background: var(--bg);
+  font-family: 'SF Mono', 'Geist Mono', Consolas, 'Roboto Mono', Menlo, Monaco, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+code {
+  font-family: inherit;
+}
