@@ -17,9 +17,9 @@ export function PublicChangelogList({ slug, customDomain }: Props) {
 
   if (data === undefined) {
     return (
-      <main className="page">
-        <div className="container">
-          <p className="loading">Loading...</p>
+      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[820px] text-left">
+          <p className="text-[0.75rem] opacity-60">Loading...</p>
         </div>
       </main>
     );
@@ -27,31 +27,33 @@ export function PublicChangelogList({ slug, customDomain }: Props) {
 
   if (!data) {
     return (
-      <main className="page">
-        <div className="container">
-          <h1 className="logo">&lt;uncommit/&gt;</h1>
-          <p className="field-hint">Changelog not found.</p>
+      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[820px] text-left">
+          <h1 className="mb-2 text-[1.75rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+          <p className="text-[0.75rem] opacity-60">Changelog not found.</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="page">
-      <div className="container">
-        <header className="header">
-          <h1 className="logo">{data.repo.repoName}</h1>
-          <p className="tagline">Changelog</p>
+    <main className="flex min-h-screen items-start justify-center px-6 py-12">
+      <div className="w-full max-w-[820px] text-left">
+        <header className="mb-8">
+          <h1 className="mb-2 text-[2rem] font-semibold tracking-[-0.02em]">{data.repo.repoName}</h1>
+          <p className="text-[0.85rem] opacity-60">Changelog</p>
         </header>
-        <div className="changelog-list">
+        <div className="flex flex-col gap-3">
           {data.changelogs.map((post) => (
             <Link
               key={post._id}
               href={slug ? `/${slug}/${post.slug}` : `/${post.slug}`}
-              className="changelog-item"
+              className="flex items-center justify-between gap-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3 text-[0.85rem] transition-colors hover:border-[var(--accent)]"
             >
               <span>{post.title}</span>
-              <span className="changelog-meta">{new Date(post.publishedAt ?? post.createdAt).toLocaleDateString()}</span>
+              <span className="text-[0.75rem] opacity-60">
+                {new Date(post.publishedAt ?? post.createdAt).toLocaleDateString()}
+              </span>
             </Link>
           ))}
         </div>

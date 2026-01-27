@@ -10,11 +10,11 @@ import { RepoSetupForm } from "@/components/RepoSetupForm";
 
 export default function HomeClient() {
   return (
-    <main className="page">
-      <div className="container">
-        <header className="header">
-          <h1 className="logo">&lt;uncommit/&gt;</h1>
-          <p className="tagline">AI-generated changelogs from your code</p>
+    <main className="flex min-h-screen items-center justify-center px-8 py-12">
+      <div className="w-full max-w-[420px] text-center">
+        <header className="mb-12">
+          <h1 className="mb-2 text-[1.75rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+          <p className="text-[0.75rem] opacity-60">AI-generated changelogs from your code</p>
         </header>
 
         <Unauthenticated>
@@ -44,13 +44,13 @@ function LoginSection() {
   };
 
   return (
-    <div className="section">
-      <Button onClick={() => void handleSignIn()}>
+    <div className="flex flex-col items-center gap-4">
+      <Button onClick={() => void handleSignIn()} className="gap-2">
         <GitHubIcon />
         Sign in with GitHub
       </Button>
-      <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
-        <Link href="/about" className="field-link">
+      <p className="text-[0.75rem] opacity-60">
+        <Link href="/about" className="underline underline-offset-4">
           What is this?
         </Link>
       </p>
@@ -64,18 +64,14 @@ function SetupSection() {
 
   if (currentUser === undefined) {
     return (
-      <div className="section">
-        <p className="loading">Loading...</p>
+      <div className="flex flex-col items-center gap-2">
+        <p className="text-[0.75rem] opacity-60">Loading...</p>
       </div>
     );
   }
 
   return (
-    <RepoSetupForm
-      selectedRepo={selectedRepo}
-      onSelectedRepoChange={setSelectedRepo}
-      showAboutLink
-    />
+    <RepoSetupForm selectedRepo={selectedRepo} onSelectedRepoChange={setSelectedRepo} showAboutLink />
   );
 }
 

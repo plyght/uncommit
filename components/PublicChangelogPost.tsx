@@ -20,9 +20,9 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
 
   if (data === undefined) {
     return (
-      <main className="page">
-        <div className="container">
-          <p className="loading">Loading...</p>
+      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[820px] text-left">
+          <p className="text-[0.75rem] opacity-60">Loading...</p>
         </div>
       </main>
     );
@@ -30,10 +30,10 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
 
   if (!data) {
     return (
-      <main className="page">
-        <div className="container">
-          <h1 className="logo">&lt;uncommit/&gt;</h1>
-          <p className="field-hint">Post not found.</p>
+      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[820px] text-left">
+          <h1 className="mb-2 text-[1.75rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+          <p className="text-[0.75rem] opacity-60">Post not found.</p>
         </div>
       </main>
     );
@@ -42,17 +42,23 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
   const backHref = slug ? `/${slug}` : "/";
 
   return (
-    <main className="page">
-      <div className="container">
-        <header className="header">
-          <Link href={backHref} className="back-link">
+    <main className="flex min-h-screen items-start justify-center px-6 py-12">
+      <div className="w-full max-w-[820px] text-left">
+        <header className="mb-8 flex items-center gap-6">
+          <Link href={backHref} className="text-[0.75rem] opacity-60 hover:opacity-100">
             ← Back
           </Link>
-          <h1 className="logo">{data.changelog.title}</h1>
-          <p className="tagline">{data.repo.repoName}</p>
+          <div>
+            <h1 className="text-[2rem] font-semibold tracking-[-0.02em]">{data.changelog.title}</h1>
+            <p className="text-[0.85rem] opacity-60">
+              {data.repo.repoOwner}/{data.repo.repoName}
+            </p>
+          </div>
         </header>
-        <article className="changelog-body">
-          <MarkdownPreview markdown={data.changelog.markdown} />
+        <article className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-6">
+          <div className="font-sans text-[1rem] leading-[1.7] text-[var(--fg)]">
+            <MarkdownPreview markdown={data.changelog.markdown} />
+          </div>
         </article>
       </div>
     </main>

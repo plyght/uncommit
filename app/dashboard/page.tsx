@@ -36,9 +36,9 @@ export default function DashboardPage() {
 
   if (repos === undefined) {
     return (
-      <main className="page">
-        <div className="container">
-          <p className="loading">Loading...</p>
+      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+        <div className="w-full max-w-[720px] text-left">
+          <p className="text-[0.75rem] opacity-60">Loading...</p>
         </div>
       </main>
     );
@@ -47,12 +47,12 @@ export default function DashboardPage() {
   const activeRepoData = repos.find((repo) => `${repo.repoOwner}/${repo.repoName}` === activeRepo);
 
   return (
-    <main className="dashboard-shell">
-      <aside className="dashboard-sidebar">
+    <main className="grid min-h-screen grid-cols-[240px_1fr] bg-[var(--bg)]">
+      <aside className="flex flex-col justify-between border-r border-[var(--border)] bg-[var(--card-bg)] px-4 py-6">
         <div>
-          <div className="dashboard-brand">&lt;uncommit/&gt;</div>
-          <div className="dashboard-project">
-            <div className="label">Project</div>
+          <div className="mb-6 text-[0.9rem] font-semibold">&lt;uncommit/&gt;</div>
+          <div className="mb-6 flex flex-col gap-3">
+            <div className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Project</div>
             <Select
               items={projectItems}
               value={activeRepo}
@@ -65,7 +65,7 @@ export default function DashboardPage() {
               placeholder="Select a repo"
             />
             <Button
-              className="dashboard-new"
+              className="w-full"
               onClick={() => {
                 setActiveRepo("");
                 setActiveTab("settings");
@@ -74,57 +74,57 @@ export default function DashboardPage() {
               New project
             </Button>
           </div>
-          <nav className="dashboard-nav">
+          <nav className="flex flex-col gap-2">
             <button
               type="button"
-              className={`dashboard-nav-button ${activeTab === "release" ? "active" : ""}`}
+              className={`w-full rounded-[var(--radius)] border px-3 py-2 text-left text-[0.75rem] transition-colors ${activeTab === "release" ? "border-[var(--accent)] bg-[var(--gray-100)]" : "border-transparent opacity-70 hover:border-[var(--border)] hover:opacity-100"}`}
               onClick={() => setActiveTab("release")}
             >
               Release notes
             </button>
             <button
               type="button"
-              className={`dashboard-nav-button ${activeTab === "changelogs" ? "active" : ""}`}
+              className={`w-full rounded-[var(--radius)] border px-3 py-2 text-left text-[0.75rem] transition-colors ${activeTab === "changelogs" ? "border-[var(--accent)] bg-[var(--gray-100)]" : "border-transparent opacity-70 hover:border-[var(--border)] hover:opacity-100"}`}
               onClick={() => setActiveTab("changelogs")}
             >
               Changelogs
             </button>
             <button
               type="button"
-              className={`dashboard-nav-button ${activeTab === "settings" ? "active" : ""}`}
+              className={`w-full rounded-[var(--radius)] border px-3 py-2 text-left text-[0.75rem] transition-colors ${activeTab === "settings" ? "border-[var(--accent)] bg-[var(--gray-100)]" : "border-transparent opacity-70 hover:border-[var(--border)] hover:opacity-100"}`}
               onClick={() => setActiveTab("settings")}
             >
               Settings
             </button>
           </nav>
         </div>
-        <div className="dashboard-footer">
-          <Button onClick={() => void signOut()} className="dashboard-logout">
+        <div className="flex flex-col gap-2">
+          <Button onClick={() => void signOut()} className="w-full">
             Log out
           </Button>
         </div>
       </aside>
 
-      <section className="dashboard-main">
+      <section className="p-8">
         {activeTab === "settings" ? (
-          <div className="dashboard-panel">
-            <h1 className="dashboard-title">Project settings</h1>
-            <p className="field-hint">Update plan, domain, version rules, and publish settings.</p>
+          <div className="flex max-w-[820px] flex-col gap-3">
+            <h1 className="text-[1.1rem] font-semibold">Project settings</h1>
+            <p className="text-[0.75rem] opacity-60">Update plan, domain, version rules, and publish settings.</p>
             <RepoSetupForm selectedRepo={activeRepo} onSelectedRepoChange={setActiveRepo} />
           </div>
         ) : (
-          <div className="dashboard-panel">
-            <h1 className="dashboard-title">
+          <div className="flex max-w-[820px] flex-col gap-3">
+            <h1 className="text-[1.1rem] font-semibold">
               {activeTab === "release" ? "Release notes" : "Changelogs"}
             </h1>
-            <p className="field-hint">Manage posts for the selected project.</p>
+            <p className="text-[0.75rem] opacity-60">Manage posts for the selected project.</p>
             {activeRepoData ? (
               <RepoChangelogSection
                 repoId={activeRepoData._id}
                 repoName={`${activeRepoData.repoOwner}/${activeRepoData.repoName}`}
               />
             ) : (
-              <p className="field-hint">Select a repo or create a new project.</p>
+              <p className="text-[0.75rem] opacity-60">Select a repo or create a new project.</p>
             )}
           </div>
         )}
@@ -141,28 +141,28 @@ function RepoChangelogSection({ repoId, repoName }: { repoId: Id<"repos">; repoN
 
   if (changelogs === undefined) {
     return (
-      <div className="dashboard-card">
-        <div className="dashboard-header">{repoName}</div>
-        <p className="loading-small">Loading posts...</p>
+      <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
+        <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
+        <p className="text-[0.75rem] opacity-60">Loading posts...</p>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-card">
-      <div className="dashboard-header">{repoName}</div>
+    <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
+      <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
       {changelogs.length === 0 ? (
-        <p className="field-hint">No changelogs yet.</p>
+        <p className="text-[0.75rem] opacity-60">No changelogs yet.</p>
       ) : (
-        <ul className="dashboard-posts">
+        <ul className="mt-4 flex flex-col gap-3">
           {changelogs.map((post) => (
-            <li key={post._id} className="dashboard-post">
+            <li key={post._id} className="flex items-center justify-between gap-4">
               <div>
                 <div>{post.title}</div>
-                <div className="dashboard-meta">{post.status}</div>
+                <div className="text-[0.75rem] opacity-60">{post.status}</div>
               </div>
-              <div className="dashboard-actions">
-                <Link href={`/dashboard/edit/${post._id}`} className="field-link">
+              <div className="flex items-center gap-2">
+                <Link href={`/dashboard/edit/${post._id}`} className="text-[0.75rem] underline underline-offset-4">
                   Edit
                 </Link>
                 {post.status === "published" ? (

@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: oklch(100% 0 0);
+  --fg: oklch(0% 0 0);
+  --border: oklch(85% 0 0);
+  --input-bg: oklch(100% 0 0);
+  --button-bg: oklch(0% 0 0);
+  --button-fg: oklch(100% 0 0);
+  --button-hover: oklch(25% 0 0);
+  --error: oklch(55% 0.22 25);
+  --success: oklch(55% 0.16 145);
+  --gray-100: oklch(96% 0 0);
+  --gray-200: oklch(90% 0 0);
+  --gray-300: oklch(82% 0 0);
+  --gray-600: oklch(45% 0 0);
+  --radius: 0px;
+  --card-bg: oklch(100% 0 0);
+  --card-border: oklch(85% 0 0);
+  --accent: oklch(60% 0.18 145);
+  --accent-subtle: oklch(92% 0.05 145);
+  --shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0% 0 0);
+    --fg: oklch(100% 0 0);
+    --border: oklch(25% 0 0);
+    --input-bg: oklch(10% 0 0);
+    --button-bg: oklch(100% 0 0);
+    --button-fg: oklch(0% 0 0);
+    --button-hover: oklch(85% 0 0);
+    --error: oklch(65% 0.22 25);
+    --success: oklch(65% 0.16 145);
+    --gray-100: oklch(15% 0 0);
+    --gray-200: oklch(25% 0 0);
+    --gray-300: oklch(35% 0 0);
+    --gray-600: oklch(65% 0 0);
+    --card-bg: oklch(8% 0 0);
+    --card-border: oklch(25% 0 0);
+    --accent: oklch(70% 0.16 145);
+    --accent-subtle: oklch(20% 0.05 145);
+    --shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+  }
+}

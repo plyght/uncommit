@@ -130,19 +130,19 @@ export function RepoSetupForm({
 
   if (currentUser === undefined) {
     return (
-      <div className="section">
-        <p className="loading">Loading...</p>
+      <div className="flex flex-col gap-2">
+        <p className="text-[0.75rem] opacity-60">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="section">
-      <div className="form">
-        <div className="field">
-          <label className="label">Repository</label>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Repository</label>
           {loadingRepos ? (
-            <p className="loading-small">Loading repositories...</p>
+            <p className="text-[0.75rem] opacity-60">Loading repositories...</p>
           ) : (
             <Select
               items={repoItems}
@@ -157,38 +157,38 @@ export function RepoSetupForm({
           )}
         </div>
 
-        <div className="field">
-          <label className="label">Plan</label>
-          <div className="plan-grid">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Plan</label>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <button
               type="button"
-              className={`plan-card ${planType === "paid" ? "selected" : ""}`}
+              className={`relative flex flex-col gap-1 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-3 text-left text-[0.75rem] transition-colors hover:border-[var(--fg)] ${planType === "paid" ? "border-[var(--accent)]" : ""}`}
               onClick={() => {
                 setPlanType("paid");
                 setSetupSaved(false);
               }}
             >
-              <div className="plan-title">Pay $15/mo</div>
-              <div className="plan-meta">Custom domain + analytics</div>
+              <div className="text-[0.8rem] font-semibold">Pay $15/mo</div>
+              <div className="text-[0.7rem] opacity-60">Custom domain + analytics</div>
               {planType === "paid" && <Checkmark />}
             </button>
             <button
               type="button"
-              className={`plan-card ${planType === "free" ? "selected" : ""}`}
+              className={`relative flex flex-col gap-1 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-3 text-left text-[0.75rem] transition-colors hover:border-[var(--fg)] ${planType === "free" ? "border-[var(--accent)]" : ""}`}
               onClick={() => {
                 setPlanType("free");
                 setSetupSaved(false);
               }}
             >
-              <div className="plan-title">Continue free</div>
-              <div className="plan-meta">Hosted slug only</div>
+              <div className="text-[0.8rem] font-semibold">Continue free</div>
+              <div className="text-[0.7rem] opacity-60">Hosted slug only</div>
               {planType === "free" && <Checkmark />}
             </button>
           </div>
         </div>
 
-        <div className="field">
-          <label className="label">Changelog domain</label>
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Changelog domain</label>
           {planType === "paid" ? (
             <Input
               value={customDomain}
@@ -200,17 +200,19 @@ export function RepoSetupForm({
               disabled={loading}
             />
           ) : (
-            <div className="field-hint">
+            <div className="text-[0.75rem] opacity-60">
               Free plan uses a slug like{" "}
-              <code className="field-code">/{selectedRepo.split("/")[1] || "repo"}-x1y2z3</code>
+              <code className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--gray-100)] px-1 py-0.5 font-mono text-[0.7rem]">
+                /{selectedRepo.split("/")[1] || "repo"}-x1y2z3
+              </code>
             </div>
           )}
         </div>
 
-        <div className="field">
-          <label className="label">Version trigger</label>
-          <div className="radio-group">
-            <label className="radio-label">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Version trigger</label>
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="any"
@@ -223,7 +225,7 @@ export function RepoSetupForm({
               />
               <span>Every version increase</span>
             </label>
-            <label className="radio-label">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="major-only"
@@ -239,10 +241,10 @@ export function RepoSetupForm({
           </div>
         </div>
 
-        <div className="field">
-          <label className="label">Publish mode</label>
-          <div className="radio-group">
-            <label className="radio-label">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Publish mode</label>
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="auto"
@@ -255,7 +257,7 @@ export function RepoSetupForm({
               />
               <span>Auto-publish changelogs</span>
             </label>
-            <label className="radio-label">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="draft"
@@ -271,10 +273,10 @@ export function RepoSetupForm({
           </div>
         </div>
 
-        <div className="field">
-          <label className="label">Version source</label>
-          <div className="radio-group">
-            <label className="radio-label">
+        <div className="flex flex-col gap-2">
+          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Version source</label>
+          <div className="flex flex-col gap-2">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="auto"
@@ -287,7 +289,7 @@ export function RepoSetupForm({
               />
               <span>Auto-detect (package.json, Cargo.toml, etc.)</span>
             </label>
-            <label className="radio-label">
+            <label className="flex items-center gap-2 text-[0.75rem]">
               <input
                 type="radio"
                 value="uncommit"
@@ -303,18 +305,28 @@ export function RepoSetupForm({
           </div>
         </div>
 
-        {message && <div className={`message ${message.type}`}>{message.text}</div>}
+        {message && (
+          <div
+            className={`rounded-[var(--radius)] border px-3 py-2 text-[0.75rem] ${
+              message.type === "success"
+                ? "border-[var(--success)] text-[var(--success)]"
+                : "border-[var(--error)] text-[var(--error)]"
+            }`}
+          >
+            {message.text}
+          </div>
+        )}
 
         <Button onClick={handleSave} disabled={!selectedRepo || loading} fullWidth>
           {loading ? "Saving..." : "Save setup"}
         </Button>
 
         {setupSaved && (
-          <div className="field-hint">
+          <div className="text-[0.75rem] opacity-60">
             {installUrl ? (
               <>
                 Install the GitHub App to start monitoring.{" "}
-                <a href={installUrl} className="field-link" target="_blank" rel="noopener noreferrer">
+                <a href={installUrl} className="underline underline-offset-4" target="_blank" rel="noopener noreferrer">
                   Install now
                 </a>
               </>
@@ -325,29 +337,29 @@ export function RepoSetupForm({
         )}
 
         {userRepos && userRepos.length > 0 && (
-          <div className="setup-summary">
-            <div className="label">Your repos</div>
-            <ul className="setup-list">
+          <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4 text-[0.75rem]">
+            <div className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Your repos</div>
+            <ul className="mt-2 flex flex-col gap-2">
               {userRepos.map((repo) => (
-                <li key={repo._id}>
+                <li key={repo._id} className="flex items-center justify-between gap-3">
                   <span>
                     {repo.repoOwner}/{repo.repoName}
                   </span>
-                  <span className="setup-meta">
+                  <span className="opacity-60">
                     {repo.publishMode === "auto" ? "Auto" : "Draft"} · {repo.versionStrategy}
                   </span>
                 </li>
               ))}
             </ul>
-            <Link href="/dashboard" className="field-link">
+            <Link href="/dashboard" className="underline underline-offset-4">
               Go to dashboard
             </Link>
           </div>
         )}
 
         {showAboutLink && (
-          <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
-            <Link href="/about" className="field-link">
+          <p className="mt-4 text-center text-[0.75rem] opacity-60">
+            <Link href="/about" className="underline underline-offset-4">
               What is this?
             </Link>
           </p>
@@ -359,7 +371,7 @@ export function RepoSetupForm({
 
 function Checkmark() {
   return (
-    <span className="plan-check">
+    <span className="absolute right-3 top-3 text-[var(--accent)]">
       <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor">
         <path d="M9.1603 1.12218C9.50684 1.34873 9.60427 1.81354 9.37792 2.16038L5.13603 8.66012C5.01614 8.8438 4.82192 8.96576 4.60451 8.99384C4.3871 9.02194 4.1683 8.95335 4.00574 8.80615L1.24664 6.30769C0.939709 6.02975 0.916013 5.55541 1.19372 5.24822C1.47142 4.94102 1.94536 4.91731 2.2523 5.19524L4.36085 7.10461L8.12299 1.33999C8.34934 0.993152 8.81376 0.895638 9.1603 1.12218Z" />
       </svg>

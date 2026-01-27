@@ -11,6 +11,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
+import { lexicalTheme } from "@/components/lexicalTheme";
 
 type Props = {
   markdown: string;
@@ -20,6 +21,7 @@ export function MarkdownPreview({ markdown }: Props) {
   const initialConfig = {
     namespace: "uncommit-markdown-preview",
     editable: false,
+    theme: lexicalTheme,
     nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, LinkNode],
     onError(error: Error) {
       throw error;
@@ -27,11 +29,15 @@ export function MarkdownPreview({ markdown }: Props) {
   };
 
   return (
-    <div className="markdown-preview">
+    <div className="rounded-[var(--radius)] bg-transparent">
       <LexicalComposer initialConfig={initialConfig}>
         <PreviewInitializer markdown={markdown} />
         <RichTextPlugin
-          contentEditable={<ContentEditable className="markdown-editor" />}
+          contentEditable={
+            <div className="px-0 py-0">
+              <ContentEditable dir="ltr" className="text-left text-[1rem] leading-[1.7] text-[var(--fg)] outline-none" />
+            </div>
+          }
           placeholder={null}
           ErrorBoundary={LexicalErrorBoundary}
         />

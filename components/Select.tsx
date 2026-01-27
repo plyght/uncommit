@@ -32,26 +32,26 @@ export function Select({ items, value, onValueChange, placeholder = "Select...",
       onValueChange={handleValueChange(onValueChange)}
       disabled={disabled}
     >
-      <BaseSelect.Trigger className="select-trigger">
-        <BaseSelect.Value className="select-value" placeholder={placeholder} />
-        <BaseSelect.Icon className="select-icon">
+      <BaseSelect.Trigger className="flex h-9 w-full items-center justify-between gap-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--input-bg)] px-3 text-[0.75rem] text-[var(--fg)] transition-colors hover:border-[var(--fg)]">
+        <BaseSelect.Value className="truncate text-left" placeholder={placeholder} />
+        <BaseSelect.Icon className="text-[var(--fg)]/70">
           <ChevronIcon />
         </BaseSelect.Icon>
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
-        <BaseSelect.Positioner className="select-positioner" sideOffset={8}>
-          <BaseSelect.Popup className="select-popup">
-            <BaseSelect.List className="select-list">
+        <BaseSelect.Positioner className="z-50" sideOffset={8}>
+          <BaseSelect.Popup className="w-[var(--base-select-trigger-width)] rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-1 shadow-[var(--shadow)]">
+            <BaseSelect.List className="max-h-64 overflow-auto">
               {items.map((item) => (
                 <BaseSelect.Item
                   key={item.value}
                   value={item.value}
-                  className="select-item"
+                  className="flex cursor-pointer items-center gap-2 rounded-[var(--radius)] px-2 py-1.5 text-[0.75rem] text-[var(--fg)] transition-colors data-[highlighted]:bg-[var(--gray-100)] data-[selected]:text-[var(--accent)]"
                 >
-                  <BaseSelect.ItemIndicator className="select-item-indicator">
+                  <BaseSelect.ItemIndicator className="flex h-4 w-4 items-center justify-center">
                     <CheckIcon />
                   </BaseSelect.ItemIndicator>
-                  <BaseSelect.ItemText className="select-item-text">
+                  <BaseSelect.ItemText className="truncate">
                     {item.label}
                   </BaseSelect.ItemText>
                 </BaseSelect.Item>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Providers } from "./providers";
-import "./globals.css";
+import "./styles.css";
 
 const productionUrl = "https://0ni.uncommit.sh";
 const title = "<uncommit/>";
@@ -84,7 +84,7 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="light dark" />
       </head>
-      <body>
+      <body className="min-h-screen bg-[var(--bg)] text-[var(--fg)] antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>
