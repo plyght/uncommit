@@ -32,9 +32,20 @@ export default function Home() {
 function LoginSection() {
   const { signIn } = useAuthActions();
 
+  const handleSignIn = async () => {
+    try {
+      const { redirect } = await signIn("github", { redirectTo: "/" });
+      if (redirect) {
+        window.location.href = redirect.toString();
+      }
+    } catch {
+      // Ignore - connection lost during redirect is expected
+    }
+  };
+
   return (
     <div className="section">
-      <Button onClick={() => signIn("github")}>
+      <Button onClick={() => void handleSignIn()}>
         <GitHubIcon />
         Sign in with GitHub
       </Button>

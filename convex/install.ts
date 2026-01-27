@@ -1,4 +1,4 @@
-import { action, mutation } from "./_generated/server";
+import { action, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
 import { encryptSecret } from "./encryption";
@@ -363,7 +363,7 @@ jobs:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `;
 
-const saveInstallation = mutation({
+export const saveInstallation = internalMutation({
   args: {
     userId: v.id("users"),
     repoOwner: v.string(),
@@ -447,7 +447,7 @@ export const installWorkflow = action({
       aiProvider,
     });
 
-    await ctx.runMutation(saveInstallation, {
+    await ctx.runMutation(internal.install.saveInstallation, {
       userId,
       repoOwner,
       repoName,
