@@ -1,13 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery, useMutation } from "convex/react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/Button";
+import { Select } from "@/components/Select";
+import { RepoSetupForm } from "@/components/RepoSetupForm";
+
+type DashboardTab = "release" | "changelogs" | "settings";
 
 export default function DashboardPage() {
   const repos = useQuery(api.repos.getUserRepos);
+  const { signOut } = useAuthActions();
+  const [activeTab, setActiveTab] = useState<DashboardTab>("release");
+  const [activeRepo, setActiveRepo] = useState("");
+
+  useEffect(() => {
+    if (!repos || repos.length === 0) return;
+    if (!activeRepo) {
+      setActiveRepo(`${repos[0].repoOwner}/${repos[0].repoName}`);
+    }
+  }, [repos, activeRepo]);
+
+  const projectItems = useMemo(
+    () =>
+      (repos ?? []).map((repo) => ({
+        value: `${repo.repoOwner}/${repo.repoName}`,
+        label: `${repo.repoOwner}/${repo.repoName}`,
+      })),
+    [repos]
+  );
 
   if (repos === undefined) {
     return (
@@ -19,20 +44,94 @@ export default function DashboardPage() {
     );
   }
 
+  const activeRepoData = repos.find((repo) => `${repo.repoOwner}/${repo.repoName}` === activeRepo);
+
   return (
-    <main className="page">
-      <div className="container">
-        <header className="header">
-          <h1 className="logo">Dashboard</h1>
-          <p className="tagline">Manage changelogs</p>
-        </header>
-        <div className="dashboard-list">
-          {repos.map((repo) => (
-            <RepoChangelogSection key={repo._id} repoId={repo._id} repoName={`${repo.repoOwner}/${repo.repoName}`} />
-          ))}
-          {repos.length === 0 && <p className="field-hint">No repos configured yet.</p>}
+    <main className="dashboard-shell">
+      <aside className="dashboard-sidebar">
+        <div>
+          <div className="dashboard-brand">&lt;uncommit/&gt;</div>
+          <nav className="dashboard-nav">
+            <button
+              type="button"
+              className={`dashboard-nav-button ${activeTab === "release" ? "active" : ""}`}
+              onClick={() => setActiveTab("release")}
+            >
+              Release notes
+            </button>
+            <button
+              type="button"
+              className={`dashboard-nav-button ${activeTab === "changelogs" ? "active" : ""}`}
+              onClick={() => setActiveTab("changelogs")}
+            >
+              Changelogs
+            </button>
+            <button
+              type="button"
+              className={`dashboard-nav-button ${activeTab === "settings" ? "active" : ""}`}
+              onClick={() => setActiveTab("settings")}
+            >
+              Settings
+            </button>
+          </nav>
         </div>
-      </div>
+        <div className="dashboard-footer">
+          <Button onClick={() => void signOut()} className="dashboard-logout">
+            Log out
+          </Button>
+        </div>
+      </aside>
+
+      <section className="dashboard-main">
+        <div className="dashboard-topbar">
+          <div className="project-switcher">
+            <div className="label">Project</div>
+            <Select
+              items={projectItems}
+              value={activeRepo}
+              onValueChange={(value) => {
+                setActiveRepo(value);
+                if (activeTab !== "settings") {
+                  setActiveTab("release");
+                }
+              }}
+              placeholder="Select a repo"
+            />
+          </div>
+          <Button
+            className="dashboard-new"
+            onClick={() => {
+              setActiveRepo("");
+              setActiveTab("settings");
+            }}
+          >
+            New project
+          </Button>
+        </div>
+
+        {activeTab === "settings" ? (
+          <div className="dashboard-panel">
+            <h1 className="dashboard-title">Project settings</h1>
+            <p className="field-hint">Update plan, domain, version rules, and publish settings.</p>
+            <RepoSetupForm selectedRepo={activeRepo} onSelectedRepoChange={setActiveRepo} />
+          </div>
+        ) : (
+          <div className="dashboard-panel">
+            <h1 className="dashboard-title">
+              {activeTab === "release" ? "Release notes" : "Changelogs"}
+            </h1>
+            <p className="field-hint">Manage posts for the selected project.</p>
+            {activeRepoData ? (
+              <RepoChangelogSection
+                repoId={activeRepoData._id}
+                repoName={`${activeRepoData.repoOwner}/${activeRepoData.repoName}`}
+              />
+            ) : (
+              <p className="field-hint">Select a repo or create a new project.</p>
+            )}
+          </div>
+        )}
+      </section>
     </main>
   );
 }
