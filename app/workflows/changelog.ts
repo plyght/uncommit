@@ -1,0 +1,76 @@
+import { detectVersionStep } from "@/app/steps/detectVersion";
+import { postGitHubCommentStep } from "@/app/steps/postGitHubComment";
+import { generateChangelogStep } from "@/app/steps/generateChangelog";
+import { saveChangelogStep } from "@/app/steps/saveChangelog";
+import { updateGitHubCommentStep } from "@/app/steps/updateGitHubComment";
+import type { Id } from "@/convex/_generated/dataModel";
+
+type WorkflowPayload = {
+  repoId: Id<"repos">;
+  githubRepoId: number;
+  repoOwner: string;
+  repoName: string;
+  installationId?: number;
+  beforeSha: string;
+  afterSha: string;
+  versionSource: string;
+  versionStrategy: string;
+  publishMode: string;
+  planType: string;
+  slug: string;
+  customDomain?: string;
+};
+
+export async function changelogWorkflow(payload: WorkflowPayload) {
+  "use workflow";
+
+  const detection = await detectVersionStep(payload);
+  if (!detection.shouldRelease || !detection.version) {
+    return { skipped: true };
+  }
+
+  const comment = await postGitHubCommentStep({
+    installationId: payload.installationId,
+    repoOwner: payload.repoOwner,
+    repoName: payload.repoName,
+    commitSha: payload.afterSha,
+    version: detection.version,
+  });
+
+  const markdown = await generateChangelogStep({
+    version: detection.version,
+    previousVersion: detection.previousVersion,
+    beforeSha: payload.beforeSha,
+    afterSha: payload.afterSha,
+  });
+
+  const saved = await saveChangelogStep({
+    repoId: payload.repoId,
+    version: detection.version,
+    markdown,
+    publishMode: payload.publishMode,
+  });
+
+  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_BASE_URL || "";
+  if (!payload.customDomain && !appBaseUrl) {
+    return { skipped: true, reason: "No app base URL or custom domain configured" };
+  }
+
+  const publicLink =
+    payload.publishMode === "auto"
+      ? payload.customDomain
+        ? `https://${payload.customDomain}/${saved.postSlug}`
+        : `${appBaseUrl}/${payload.slug}/${saved.postSlug}`
+      : `${appBaseUrl}/dashboard/edit/${saved.postId}`;
+
+  await updateGitHubCommentStep({
+    installationId: payload.installationId,
+    commentId: comment.commentId,
+    repoOwner: payload.repoOwner,
+    repoName: payload.repoName,
+    link: publicLink,
+    publishMode: payload.publishMode,
+  });
+
+  return { ok: true, link: publicLink };
+}

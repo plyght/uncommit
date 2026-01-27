@@ -4,16 +4,15 @@ Automated AI-generated release notes from your code. Uncommit installs a GitHub 
 
 ## Overview
 
-Uncommit eliminates the tedium of writing release notes. When you bump your version and push to main, the installed workflow detects the change, analyzes your code diff since the last tag, and generates concise, user-facing release notes using your choice of AI provider.
+Uncommit eliminates the tedium of writing release notes. When you bump your version and push to the default branch, the GitHub App webhook starts a Vercel Workflow to detect version changes, analyze diffs, and generate concise, user-facing changelog entries.
 
 ## Features
 
-- **Automatic Version Detection**: Supports package.json, Cargo.toml, pyproject.toml, version.txt, and VERSION files
+- **Automatic Version Detection**: Supports package.json, Cargo.toml, pyproject.toml, version.txt, VERSION, and uncommit.json
 - **Intelligent Diff Analysis**: Analyzes code changes across 14+ file types to generate meaningful notes
 - **Multi-Provider Support**: Works with OpenAI or Anthropic APIs
-- **Secure Key Storage**: API keys are encrypted client-side using NaCl before being stored as GitHub secrets
-- **Zero Configuration**: One-click install per repository, no manual workflow editing required
-- **Tag Management**: Automatically creates version tags and GitHub releases
+- **GitHub App Monitoring**: Webhook-driven detection of version bumps
+- **Durable Workflows**: Uses Vercel Workflow for long-running AI generation
 
 ## Installation
 
@@ -28,20 +27,31 @@ bunx convex dev
 
 Create a `.env.local` file with your Convex deployment URL and GitHub OAuth credentials.
 
+## Environment Variables
+
+Required:
+- `CONVEX_URL`: Convex deployment URL for server-side queries
+- `NEXT_PUBLIC_CONVEX_URL`: Convex deployment URL for client-side queries
+- `GITHUB_APP_ID`: GitHub App ID
+- `GITHUB_APP_PRIVATE_KEY`: GitHub App private key (escaped newlines as `\\n`)
+- `GITHUB_WEBHOOK_SECRET`: GitHub App webhook secret
+- `NEXT_PUBLIC_GITHUB_APP_INSTALL_URL`: Link to install the GitHub App
+- `OPENAI_API_KEY`: OpenAI API key used by workflows
+- `NEXT_PUBLIC_APP_URL`: Base URL for dashboard links (e.g., `<https://app.uncommit.com>`)
+- `NEXT_PUBLIC_APP_DOMAIN`: Primary app domain (used to detect custom domain requests)
+
 ## Usage
 
 1. Navigate to the web interface and authenticate with GitHub
-2. Select a repository from your account
-3. Choose your AI provider (OpenAI or Anthropic)
-4. Enter your API key
-5. Click Install
+2. Select a repository and save setup preferences
+3. Install the GitHub App
 
-The workflow activates on pushes to main/master when version files change. Version bump detected triggers the release flow automatically.
+The webhook activates on pushes to the default branch when version files change. Version bump detection triggers the release flow automatically.
 
 ## How It Works
 
 ```
-Version Bump → Push to Main → Workflow Triggered
+Version Bump → Push to Default Branch → Workflow Triggered
                                     ↓
                             Detect Version Change
                                     ↓
@@ -74,6 +84,7 @@ The installed workflow monitors these version files:
 - `Cargo.toml` (Rust)
 - `pyproject.toml` (Python)
 - `version.txt` / `VERSION` (Generic)
+- `uncommit.json` (Uncommit)
 
 AI prompts are configured to produce:
 - No emojis

@@ -1,14 +1,14 @@
 import { headers } from "next/headers";
-import HomeClient from "./home-client";
 import { PublicChangelogList } from "@/components/PublicChangelogList";
+import { PublicChangelogPost } from "@/components/PublicChangelogPost";
 
-export default function Home() {
+export default function SlugPage({ params }: { params: { slug: string } }) {
   const host = headers().get("host")?.split(":")[0] ?? "";
   const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN;
 
   if (host && appDomain && host !== appDomain) {
-    return <PublicChangelogList customDomain={host} />;
+    return <PublicChangelogPost customDomain={host} postSlug={params.slug} />;
   }
 
-  return <HomeClient />;
+  return <PublicChangelogList slug={params.slug} />;
 }
