@@ -60,8 +60,8 @@ The generated workflow:
 
 ## Architecture
 
-- `app/page.tsx`: Landing page with GitHub OAuth
-- `app/dashboard/page.tsx`: Repository selection and workflow installation
+- `app/page.tsx`: Single-page app with GitHub OAuth, repository selection, and workflow installation
+- `components/Select.tsx`: Repository dropdown using Base UI
 - `convex/auth.ts`: GitHub OAuth configuration with repo/workflow scopes
 - `convex/github.ts`: GitHub API interactions (repos, secrets, workflow files)
 - `convex/install.ts`: Workflow templates and installation logic
@@ -91,7 +91,7 @@ bun run dev
 bun run convex:dev
 ```
 
-Requires Bun runtime. Key dependencies: Next.js 14, Convex, @convex-dev/auth, tweetnacl.
+Requires Bun runtime. Key dependencies: Next.js 14, Convex, @convex-dev/auth, @base-ui/react, tweetnacl.
 
 ## License
 
