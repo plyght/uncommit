@@ -38,7 +38,7 @@ export default function DashboardPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[720px] text-left">
-          <p className="text-[0.75rem] opacity-60">Loading...</p>
+          <p className="text-[0.75rem] opacity-50">Loading...</p>
         </div>
       </main>
     );
@@ -52,7 +52,7 @@ export default function DashboardPage() {
         <div>
           <div className="mb-6 text-[0.9rem] font-semibold">&lt;uncommit/&gt;</div>
           <div className="mb-6 flex flex-col gap-3">
-            <div className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Project</div>
+            <div className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Project</div>
             <Select
               items={projectItems}
               value={activeRepo}
@@ -109,7 +109,7 @@ export default function DashboardPage() {
         {activeTab === "settings" ? (
           <div className="flex max-w-[820px] flex-col gap-3">
             <h1 className="text-[1.1rem] font-semibold">Project settings</h1>
-            <p className="text-[0.75rem] opacity-60">Update plan, domain, version rules, and publish settings.</p>
+            <p className="text-[0.6875rem] leading-relaxed opacity-50">Update plan, domain, version rules, and publish settings.</p>
             <RepoSetupForm selectedRepo={activeRepo} onSelectedRepoChange={setActiveRepo} />
           </div>
         ) : (
@@ -117,7 +117,7 @@ export default function DashboardPage() {
             <h1 className="text-[1.1rem] font-semibold">
               {activeTab === "release" ? "Release notes" : "Changelogs"}
             </h1>
-            <p className="text-[0.75rem] opacity-60">Manage posts for the selected project.</p>
+            <p className="text-[0.6875rem] leading-relaxed opacity-50">Manage posts for the selected project.</p>
             {activeRepoData ? (
               <RepoChangelogSection
                 repoId={activeRepoData._id}
@@ -125,7 +125,7 @@ export default function DashboardPage() {
                 type={activeTab === "release" ? "release" : "changelog"}
               />
             ) : (
-              <p className="text-[0.75rem] opacity-60">Select a repo or create a new project.</p>
+              <p className="text-[0.6875rem] leading-relaxed opacity-50">Select a repo or create a new project.</p>
             )}
           </div>
         )}
@@ -152,7 +152,7 @@ function RepoChangelogSection({
     return (
       <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
         <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
-        <p className="text-[0.75rem] opacity-60">Loading posts...</p>
+        <p className="text-[0.75rem] opacity-50">Loading posts...</p>
       </div>
     );
   }
@@ -161,7 +161,7 @@ function RepoChangelogSection({
     <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
       <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
       {changelogs.length === 0 ? (
-        <p className="text-[0.75rem] opacity-60">
+        <p className="text-[0.75rem] opacity-50">
           {type === "release" ? "No release notes yet." : "No changelogs yet."}
         </p>
       ) : (
@@ -170,7 +170,7 @@ function RepoChangelogSection({
             <li key={post._id} className="flex items-center justify-between gap-4">
               <div>
                 <div>{post.title}</div>
-                <div className="text-[0.75rem] opacity-60">{post.status}</div>
+                <div className="text-[0.75rem] opacity-50">{post.status}</div>
               </div>
               <div className="flex items-center gap-2">
                 <Link href={`/dashboard/edit/${post._id}`} className="text-[0.75rem] underline underline-offset-4">

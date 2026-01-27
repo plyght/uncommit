@@ -61,7 +61,7 @@ export default function EditChangelogPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[900px] text-left">
-          <p className="text-[0.75rem] opacity-60">Changelog not found.</p>
+          <p className="text-[0.75rem] opacity-50">Changelog not found.</p>
         </div>
       </main>
     );
@@ -71,7 +71,7 @@ export default function EditChangelogPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[900px] text-left">
-          <p className="text-[0.75rem] opacity-60">Loading...</p>
+          <p className="text-[0.75rem] opacity-50">Loading...</p>
         </div>
       </main>
     );
@@ -81,7 +81,7 @@ export default function EditChangelogPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[900px] text-left">
-          <p className="text-[0.75rem] opacity-60">Sign in to edit posts.</p>
+          <p className="text-[0.75rem] opacity-50">Sign in to edit posts.</p>
           <Link href="/" className="text-[0.75rem] underline underline-offset-4">
             Go to sign in
           </Link>
@@ -94,7 +94,7 @@ export default function EditChangelogPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[900px] text-left">
-          <p className="text-[0.75rem] opacity-60">Changelog not found.</p>
+          <p className="text-[0.75rem] opacity-50">Changelog not found.</p>
         </div>
       </main>
     );
@@ -112,28 +112,28 @@ export default function EditChangelogPage() {
     <main className="flex min-h-screen items-start justify-center px-6 py-12">
       <div className="w-full max-w-[900px] text-left">
         <header className="mb-8 flex items-center gap-6">
-          <Link href="/dashboard" className="text-[0.75rem] opacity-60 hover:opacity-100">
+          <Link href="/dashboard" className="text-[0.75rem] opacity-50 transition-opacity hover:opacity-100">
             ← Back
           </Link>
           <div>
             <h1 className="text-[1.5rem] font-semibold tracking-[-0.02em]">Edit post</h1>
-            <p className="text-[0.85rem] opacity-60">{data.repo.repoOwner}/{data.repo.repoName}</p>
+            <p className="text-[0.8125rem] opacity-50">{data.repo.repoOwner}/{data.repo.repoName}</p>
           </div>
         </header>
 
         <div className="flex flex-col gap-6 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-6">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Title</label>
+              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Title</label>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Post type</label>
+              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Post type</label>
               <Select items={typeOptions} value={postType} onValueChange={(value) => setPostType(value as "release" | "changelog")} />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Content</label>
+              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Content</label>
               <MarkdownEditor value={markdown} onChange={setMarkdown} />
             </div>
           </div>

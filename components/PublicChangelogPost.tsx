@@ -29,7 +29,7 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
           </aside>
           <section className="px-6 py-12 lg:px-12 lg:py-16">
             <div className="w-full max-w-[900px] text-left">
-              <p className="text-[0.75rem] opacity-60">Loading…</p>
+              <p className="text-[0.75rem] opacity-50">Loading…</p>
             </div>
           </section>
         </div>
@@ -48,7 +48,7 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
           </aside>
           <section className="px-6 py-12 lg:px-12 lg:py-16">
             <div className="w-full max-w-[900px] text-left">
-              <p className="text-[0.75rem] opacity-60">Release note not found.</p>
+              <p className="text-[0.75rem] opacity-50">Release note not found.</p>
             </div>
           </section>
         </div>

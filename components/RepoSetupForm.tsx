@@ -133,7 +133,7 @@ export function RepoSetupForm({
   if (currentUser === undefined) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-[0.75rem] opacity-60">Loading...</p>
+        <p className="text-[0.75rem] opacity-50">Loading...</p>
       </div>
     );
   }
@@ -142,9 +142,9 @@ export function RepoSetupForm({
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Repository</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
           {loadingRepos ? (
-            <p className="text-[0.75rem] opacity-60">Loading repositories...</p>
+            <p className="text-[0.75rem] opacity-50">Loading repositories...</p>
           ) : (
             <Select
               items={repoItems}
@@ -160,7 +160,7 @@ export function RepoSetupForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Plan</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Plan</label>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             <button
               type="button"
@@ -171,7 +171,7 @@ export function RepoSetupForm({
               }}
             >
               <div className="text-[0.8rem] font-semibold">Pay $15/mo</div>
-              <div className="text-[0.7rem] opacity-60">Custom domain + analytics</div>
+              <div className="text-[0.6875rem] opacity-50">Custom domain + analytics</div>
               {planType === "paid" && <Checkmark />}
             </button>
             <button
@@ -183,14 +183,14 @@ export function RepoSetupForm({
               }}
             >
               <div className="text-[0.8rem] font-semibold">Continue free</div>
-              <div className="text-[0.7rem] opacity-60">Hosted slug only</div>
+              <div className="text-[0.6875rem] opacity-50">Hosted slug only</div>
               {planType === "free" && <Checkmark />}
             </button>
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Changelog domain</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Changelog domain</label>
           {planType === "paid" ? (
             <Input
               value={customDomain}
@@ -202,9 +202,9 @@ export function RepoSetupForm({
               disabled={loading}
             />
           ) : (
-            <div className="text-[0.75rem] opacity-60">
+            <div className="text-[0.6875rem] leading-relaxed opacity-50">
               Free plan uses a slug like{" "}
-              <code className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--gray-100)] px-1 py-0.5 font-mono text-[0.7rem]">
+              <code className="border border-[var(--border)] bg-[var(--gray-100)] px-1 py-0.5 text-[0.625rem]">
                 /{selectedRepo.split("/")[1] || "repo"}-x1y2z3
               </code>
             </div>
@@ -212,7 +212,7 @@ export function RepoSetupForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Version trigger</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version trigger</label>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-[0.75rem]">
               <input
@@ -244,7 +244,7 @@ export function RepoSetupForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Publish mode</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Publish mode</label>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-[0.75rem]">
               <input
@@ -276,7 +276,7 @@ export function RepoSetupForm({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Version source</label>
+          <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version source</label>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 text-[0.75rem]">
               <input
@@ -324,7 +324,7 @@ export function RepoSetupForm({
         </Button>
 
         {setupSaved && (
-          <div className="text-[0.75rem] opacity-60">
+          <div className="text-[0.6875rem] leading-relaxed opacity-50">
             {installUrl ? (
               <>
                 Install the GitHub App to start monitoring.{" "}
@@ -340,14 +340,14 @@ export function RepoSetupForm({
 
         {userRepos && userRepos.length > 0 && (
           <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4 text-[0.75rem]">
-            <div className="text-[0.75rem] uppercase tracking-[0.2em] opacity-60">Your repos</div>
+            <div className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Your repos</div>
             <ul className="mt-2 flex flex-col gap-2">
               {userRepos.map((repo) => (
                 <li key={repo._id} className="flex items-center justify-between gap-3">
                   <span>
                     {repo.repoOwner}/{repo.repoName}
                   </span>
-                  <span className="opacity-60">
+                  <span className="opacity-50">
                     {repo.publishMode === "auto" ? "Auto" : "Draft"} · {repo.versionStrategy}
                   </span>
                 </li>
@@ -360,7 +360,7 @@ export function RepoSetupForm({
         )}
 
         {showAboutLink && (
-          <p className="mt-4 text-center text-[0.75rem] opacity-60">
+          <p className="mt-4 text-center text-[0.75rem] opacity-50">
             <Link href="/about" className="underline underline-offset-4">
               What is this?
             </Link>

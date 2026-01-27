@@ -14,7 +14,7 @@ export default function HomeClient() {
       <div className="w-full max-w-[420px] text-center">
         <header className="mb-12">
           <h1 className="mb-2 text-[1.75rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
-          <p className="text-[0.75rem] opacity-60">AI-generated changelogs from your code</p>
+          <p className="text-[0.75rem] opacity-50">AI-generated changelogs from your code</p>
         </header>
 
         <Unauthenticated>
@@ -49,7 +49,7 @@ function LoginSection() {
         <GitHubIcon />
         Sign in with GitHub
       </Button>
-      <p className="text-[0.75rem] opacity-60">
+      <p className="text-[0.75rem] opacity-50">
         <Link href="/about" className="underline underline-offset-4">
           What is this?
         </Link>
@@ -65,7 +65,7 @@ function SetupSection() {
   if (currentUser === undefined) {
     return (
       <div className="flex flex-col items-center gap-2">
-        <p className="text-[0.75rem] opacity-60">Loading...</p>
+        <p className="text-[0.75rem] opacity-50">Loading...</p>
       </div>
     );
   }
