@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { skip, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/Button";
@@ -17,9 +17,10 @@ export default function EditChangelogPage() {
     return Array.isArray(params.id) ? params.id[0] : params.id;
   }, [params]);
 
+  const currentUser = useQuery(api.users.getCurrentUser);
   const data = useQuery(
     api.changelogs.getChangelogForEdit,
-    postId ? { postId: postId as Id<"changelogs"> } : "skip"
+    currentUser && postId ? { postId: postId as Id<"changelogs"> } : skip
   );
   const updateChangelog = useMutation(api.changelogs.updateChangelog);
   const publish = useMutation(api.changelogs.publishChangelog);
@@ -45,11 +46,24 @@ export default function EditChangelogPage() {
     );
   }
 
-  if (data === undefined) {
+  if (currentUser === undefined || data === undefined) {
     return (
       <main className="page">
         <div className="container">
           <p className="loading">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <main className="page">
+        <div className="container">
+          <p className="field-hint">Sign in to edit changelogs.</p>
+          <Link href="/" className="field-link">
+            Go to sign in
+          </Link>
         </div>
       </main>
     );
