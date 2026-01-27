@@ -15,11 +15,21 @@
     "@auth/core": "0.37.0",
     "@base-ui/react": "^1.1.0",
     "@convex-dev/auth": "^0.0.90",
+    "@lexical/code": "^0.17.0",
+    "@lexical/link": "^0.17.0",
+    "@lexical/list": "^0.17.0",
+    "@lexical/markdown": "^0.17.0",
+    "@lexical/react": "^0.17.0",
+    "@lexical/rich-text": "^0.17.0",
+    "@octokit/auth-app": "^7.0.0",
     "convex": "^1.16.0",
+    "lexical": "^0.17.0",
     "libsodium-wrappers": "^0.8.2",
     "next": "^14.2.0",
+    "octokit": "^4.0.0",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0"
+    "react-dom": "^18.3.0",
+    "workflow": "^0.7.0"
   },
   "devDependencies": {
     "@types/node": "^20",

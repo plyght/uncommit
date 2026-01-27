@@ -336,6 +336,184 @@ a.logo:hover {
   transition: background-color 0.15s;
 }
 
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.plan-card {
+  position: relative;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.plan-card.selected {
+  border-color: var(--success);
+}
+
+.plan-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.plan-meta {
+  font-size: 0.6875rem;
+  opacity: 0.6;
+  margin-top: 0.25rem;
+}
+
+.plan-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg);
+  background: var(--success);
+}
+
+.setup-summary {
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  border-radius: var(--radius);
+}
+
+.setup-list {
+  list-style: none;
+  margin: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setup-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setup-meta {
+  font-size: 0.6875rem;
+  opacity: 0.6;
+}
+
+.changelog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.changelog-item {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  transition: border-color 0.15s;
+}
+
+.changelog-item:hover {
+  border-color: var(--accent);
+}
+
+.changelog-meta {
+  font-size: 0.6875rem;
+  opacity: 0.6;
+}
+
+.changelog-body {
+  text-align: left;
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+  border-radius: var(--radius);
+}
+
+.markdown p {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.markdown-preview {
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.markdown-editor {
+  outline: none;
+}
+
+.dashboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.dashboard-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+}
+
+.dashboard-header {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-posts {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard-post {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dashboard-meta {
+  font-size: 0.6875rem;
+  opacity: 0.6;
+}
+
+.editor {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+}
+
+.editor-input {
+  min-height: 160px;
+  outline: none;
+  font-size: 0.75rem;
+}
+
+.editor-placeholder {
+  font-size: 0.75rem;
+  opacity: 0.4;
+}
+
 .btn:hover:not(:disabled) {
   background-color: var(--button-hover);
 }
