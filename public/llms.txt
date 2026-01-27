@@ -1,0 +1,28 @@
+# uncommit
+
+> uncommit is an automated release notes generator that installs a GitHub Actions workflow to detect version bumps and create AI-powered release notes by analyzing git diffs.
+
+Key points:
+
+- **One-click install**: Authenticates via GitHub OAuth, selects a repo, and installs a workflow file
+- **Version detection**: Monitors `package.json`, `Cargo.toml`, `pyproject.toml`, `version.txt`, `VERSION`
+- **AI providers**: Supports OpenAI and Anthropic APIs
+- **Secure**: API keys are encrypted client-side with NaCl sealed_box before storing as GitHub Secrets
+- **Stack**: Next.js 14, Convex backend, @convex-dev/auth for GitHub OAuth
+
+## Docs
+
+- [README](https://github.com/plyght/uncommit/blob/main/README.md): Project overview, installation, usage, and architecture
+- [Convex Schema](https://github.com/plyght/uncommit/blob/main/convex/schema.ts): Database schema for users and installations
+
+## Code
+
+- [Main page](https://github.com/plyght/uncommit/blob/main/app/page.tsx): Single-page app with GitHub OAuth flow and workflow installation UI
+- [Workflow installer](https://github.com/plyght/uncommit/blob/main/convex/install.ts): Workflow template generation and GitHub API installation logic
+- [GitHub API](https://github.com/plyght/uncommit/blob/main/convex/github.ts): Repository fetching, secrets creation, workflow file commits
+- [Encryption](https://github.com/plyght/uncommit/blob/main/convex/encryption.ts): NaCl sealed_box encryption for GitHub Actions secrets
+
+## Optional
+
+- [Auth config](https://github.com/plyght/uncommit/blob/main/convex/auth.config.ts): GitHub OAuth provider configuration
+- [About page](https://github.com/plyght/uncommit/blob/main/app/about/page.tsx): User-facing explanation of the service

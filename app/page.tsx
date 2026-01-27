@@ -57,6 +57,7 @@ function LoginSection() {
 }
 
 function SetupSection() {
+  const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
   const fetchRepos = useAction(api.github.fetchUserRepos);
   const installWorkflow = useAction(api.install.installWorkflow);
@@ -74,12 +75,16 @@ function SetupSection() {
       setLoadingRepos(true);
       fetchRepos({ accessToken: currentUser.githubAccessToken })
         .then(setRepos)
-        .catch(() => {
+        .catch((err) => {
+          if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {
+            void signOut();
+            return;
+          }
           setMessage({ type: "error", text: "Failed to fetch repositories" });
         })
         .finally(() => setLoadingRepos(false));
     }
-  }, [currentUser, fetchRepos]);
+  }, [currentUser, fetchRepos, signOut]);
 
   const handleInstall = async () => {
     if (!selectedRepo || !apiKey) return;

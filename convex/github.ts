@@ -13,6 +13,9 @@ export const fetchUserRepos = action({
     });
 
     if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        throw new Error("TOKEN_REVOKED");
+      }
       throw new Error("Failed to fetch repositories");
     }
 
