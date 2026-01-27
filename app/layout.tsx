@@ -2,10 +2,7 @@ import type { Metadata } from 'next';
 import { Providers } from './providers';
 import './globals.css';
 
-const isDev = process.env.NODE_ENV === 'development';
-const basePath = isDev ? '' : '/uncommit';
-const port = process.env.PORT || '3000';
-const siteUrl = isDev ? `http://localhost:${port}` : 'https://peril.lol/uncommit';
+const siteUrl = 'https://uncommit.sh';
 const title = '<uncommit/>';
 const description = 'AI-generated release notes from your code';
 
@@ -15,13 +12,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   icons: {
     icon: [
-      { url: `${basePath}/favicon.ico`, sizes: 'any' },
-      { url: `${basePath}/favicon.svg`, type: 'image/svg+xml' },
-      { url: `${basePath}/favicon-16.png`, sizes: '16x16', type: 'image/png' },
-      { url: `${basePath}/favicon-32.png`, sizes: '32x32', type: 'image/png' },
-      { url: `${basePath}/favicon-256.png`, sizes: '256x256', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-256.png', sizes: '256x256', type: 'image/png' },
     ],
-    apple: `${basePath}/apple-touch-icon.png`,
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     title,
