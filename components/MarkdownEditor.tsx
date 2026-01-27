@@ -15,7 +15,7 @@ import { CodeNode, $createCodeNode, $isCodeNode } from "@lexical/code";
 import { LinkNode, TOGGLE_LINK_COMMAND, $isLinkNode } from "@lexical/link";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { $getSelection, $createParagraphNode, $isRangeSelection, FORMAT_TEXT_COMMAND, FORMAT_ELEMENT_COMMAND } from "lexical";
+import { $getSelection, $createParagraphNode, $isRangeSelection, $isElementNode, FORMAT_TEXT_COMMAND, FORMAT_ELEMENT_COMMAND } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
 import { $getNearestNodeOfType } from "@lexical/utils";
 import { lexicalTheme } from "@/components/lexicalTheme";
@@ -113,9 +113,13 @@ function EditorToolbar() {
         const anchorNode = selection.anchor.getNode();
         const element = anchorNode.getKey() === "root" ? anchorNode : anchorNode.getTopLevelElementOrThrow();
 
-        const formatType = element.getFormatType();
-        if (formatType === "center" || formatType === "right") {
-          setAlignment(formatType);
+        if ($isElementNode(element)) {
+          const formatType = element.getFormatType();
+          if (formatType === "center" || formatType === "right") {
+            setAlignment(formatType);
+          } else {
+            setAlignment("left");
+          }
         } else {
           setAlignment("left");
         }

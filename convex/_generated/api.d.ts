@@ -14,8 +14,8 @@ import type * as encryption from "../encryption.js";
 import type * as github from "../github.js";
 import type * as http from "../http.js";
 import type * as install from "../install.js";
-import type * as repos from "../repos.js";
 import type * as kofi from "../kofi.js";
+import type * as repos from "../repos.js";
 import type * as users from "../users.js";
 
 import type {
@@ -31,8 +31,8 @@ declare const fullApi: ApiFromModules<{
   github: typeof github;
   http: typeof http;
   install: typeof install;
-  repos: typeof repos;
   kofi: typeof kofi;
+  repos: typeof repos;
   users: typeof users;
 }>;
 
