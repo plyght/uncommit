@@ -424,7 +424,7 @@ export const installWorkflow = action({
       repo: repoName,
     });
 
-    const encryptedValue = encryptSecret(apiKey, publicKey);
+    const encryptedValue = await encryptSecret(apiKey, publicKey);
 
     const secretName = aiProvider === "anthropic" ? "ANTHROPIC_API_KEY" : "OPENAI_API_KEY";
 

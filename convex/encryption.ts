@@ -1,23 +1,12 @@
-import nacl from "tweetnacl";
+import sodium from "libsodium-wrappers";
 
-export function encryptSecret(value: string, publicKey: string): string {
-  const publicKeyBytes = Buffer.from(publicKey, "base64");
-  const valueBytes = Buffer.from(value, "utf-8");
+export async function encryptSecret(value: string, publicKey: string): Promise<string> {
+  await sodium.ready;
   
-  const nonce = nacl.randomBytes(nacl.box.nonceLength);
+  const publicKeyBytes = sodium.from_base64(publicKey, sodium.base64_variants.ORIGINAL);
+  const valueBytes = sodium.from_string(value);
   
-  const ephemeralKeyPair = nacl.box.keyPair();
+  const encrypted = sodium.crypto_box_seal(valueBytes, publicKeyBytes);
   
-  const encrypted = nacl.box(
-    valueBytes,
-    nonce,
-    publicKeyBytes,
-    ephemeralKeyPair.secretKey
-  );
-  
-  const combined = new Uint8Array(nonce.length + encrypted.length);
-  combined.set(nonce);
-  combined.set(encrypted, nonce.length);
-  
-  return Buffer.from(combined).toString("base64");
+  return sodium.to_base64(encrypted, sodium.base64_variants.ORIGINAL);
 }

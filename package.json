@@ -16,11 +16,10 @@
     "@base-ui/react": "^1.1.0",
     "@convex-dev/auth": "^0.0.90",
     "convex": "^1.16.0",
+    "libsodium-wrappers": "^0.8.2",
     "next": "^14.2.0",
     "react": "^18.3.0",
-    "react-dom": "^18.3.0",
-    "tweetnacl": "^1.0.3",
-    "tweetnacl-util": "^0.15.1"
+    "react-dom": "^18.3.0"
   },
   "devDependencies": {
     "@types/node": "^20",

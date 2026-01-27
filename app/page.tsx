@@ -49,6 +49,9 @@ function LoginSection() {
         <GitHubIcon />
         Sign in with GitHub
       </Button>
+      <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
+        <a href="/about" className="field-link">What is this?</a>
+      </p>
     </div>
   );
 }
@@ -204,6 +207,9 @@ function SetupSection() {
         >
           {loading ? "Installing..." : "Install Workflow"}
         </Button>
+        <p className="field-hint" style={{ textAlign: "center", marginTop: "1rem" }}>
+          <a href="/about" className="field-link">What is this?</a>
+        </p>
       </div>
     </div>
   );
