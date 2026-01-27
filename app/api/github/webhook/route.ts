@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import { verifyGitHubWebhookSignature } from "@/lib/githubApp";
-import { start } from "workflow/runtime";
+import { start } from "workflow/api";
 import { changelogWorkflow } from "@/app/workflows/changelog";
 
 export const runtime = "nodejs";
@@ -73,19 +73,19 @@ export async function POST(req: Request) {
 
   await start(changelogWorkflow, [
     {
-    repoId: repo._id,
-    githubRepoId: payload.repository.id,
-    repoOwner: payload.repository.owner.login,
-    repoName: payload.repository.name,
-    installationId,
-    beforeSha: payload.before,
-    afterSha: payload.after,
-    versionSource: repo.versionSource,
-    versionStrategy: repo.versionStrategy,
-    publishMode: repo.publishMode,
-    planType: repo.planType,
-    slug: repo.slug,
-    customDomain: repo.customDomain,
+      repoId: repo._id,
+      githubRepoId: payload.repository.id,
+      repoOwner: payload.repository.owner.login,
+      repoName: payload.repository.name,
+      installationId,
+      beforeSha: payload.before,
+      afterSha: payload.after,
+      versionSource: repo.versionSource,
+      versionStrategy: repo.versionStrategy,
+      publishMode: repo.publishMode,
+      planType: repo.planType,
+      slug: repo.slug,
+      customDomain: repo.customDomain,
     },
   ]);
 
