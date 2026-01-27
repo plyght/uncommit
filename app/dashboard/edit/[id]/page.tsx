@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -9,8 +10,17 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 
-export default function EditChangelogPage({ params }: { params: { id: string } }) {
-  const data = useQuery(api.changelogs.getChangelogForEdit, { postId: params.id as Id<"changelogs"> });
+export default function EditChangelogPage() {
+  const params = useParams<{ id?: string | string[] }>();
+  const postId = useMemo(() => {
+    if (!params?.id) return null;
+    return Array.isArray(params.id) ? params.id[0] : params.id;
+  }, [params]);
+
+  const data = useQuery(
+    api.changelogs.getChangelogForEdit,
+    postId ? { postId: postId as Id<"changelogs"> } : "skip"
+  );
   const updateChangelog = useMutation(api.changelogs.updateChangelog);
   const publish = useMutation(api.changelogs.publishChangelog);
   const unpublish = useMutation(api.changelogs.unpublishChangelog);
@@ -24,6 +34,16 @@ export default function EditChangelogPage({ params }: { params: { id: string } }
       setMarkdown(data.changelog.markdown);
     }
   }, [data]);
+
+  if (!postId) {
+    return (
+      <main className="page">
+        <div className="container">
+          <p className="field-hint">Changelog not found.</p>
+        </div>
+      </main>
+    );
+  }
 
   if (data === undefined) {
     return (
