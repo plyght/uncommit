@@ -71,7 +71,7 @@ export default function EditChangelogPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[900px] text-left">
-          <p className="text-[0.75rem] opacity-50">Loading...</p>
+          <p className="text-[0.75rem] opacity-50">Loading…</p>
         </div>
       </main>
     );
@@ -157,7 +157,7 @@ export default function EditChangelogPage() {
                 }
               }}
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? "Saving…" : "Save"}
             </Button>
             {post.status === "published" ? (
               <Button
@@ -175,7 +175,7 @@ export default function EditChangelogPage() {
                   }
                 }}
               >
-                {isPublishing ? "Unpublishing..." : "Unpublish"}
+                {isPublishing ? "Unpublishing…" : "Unpublish"}
               </Button>
             ) : (
               <Button
@@ -193,7 +193,7 @@ export default function EditChangelogPage() {
                   }
                 }}
               >
-                {isPublishing ? "Publishing..." : "Publish"}
+                {isPublishing ? "Publishing…" : "Publish"}
               </Button>
             )}
             <Button

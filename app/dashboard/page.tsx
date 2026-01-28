@@ -9,6 +9,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/Button";
 import { Select } from "@/components/Select";
 import { RepoSetupForm } from "@/components/RepoSetupForm";
+import { Skeleton } from "@/components/Skeleton";
 
 type DashboardTab = "release" | "changelogs" | "settings";
 
@@ -38,7 +39,7 @@ export default function DashboardPage() {
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-12">
         <div className="w-full max-w-[720px] text-left">
-          <p className="text-[0.75rem] opacity-50">Loading...</p>
+          <p className="text-[0.75rem] opacity-50">Loading…</p>
         </div>
       </main>
     );
@@ -152,7 +153,21 @@ function RepoChangelogSection({
     return (
       <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4">
         <div className="mb-2 text-[0.85rem] font-semibold">{repoName}</div>
-        <p className="text-[0.75rem] opacity-50">Loading posts...</p>
+        <div className="mt-4 flex flex-col gap-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <Skeleton width={200} height={18} />
+                <Skeleton width={60} height={12} />
+              </div>
+              <div className="flex items-center gap-2">
+                <Skeleton width={30} height={14} />
+                <Skeleton width={80} height={36} />
+                <Skeleton width={60} height={36} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

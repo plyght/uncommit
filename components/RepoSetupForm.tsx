@@ -1,24 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
+import { RadioGroup } from "@/components/RadioGroup";
 
 type RepoSetupFormProps = {
   selectedRepo: string;
   onSelectedRepoChange: (value: string) => void;
   onSaved?: (repoFullName: string) => void;
-  showAboutLink?: boolean;
 };
 
 export function RepoSetupForm({
   selectedRepo,
   onSelectedRepoChange,
   onSaved,
-  showAboutLink = false,
 }: RepoSetupFormProps) {
   const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
@@ -136,7 +134,7 @@ export function RepoSetupForm({
   if (currentUser === undefined) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-[0.75rem] opacity-50">Loading...</p>
+        <p className="text-[0.75rem] opacity-50">Loading…</p>
       </div>
     );
   }
@@ -147,7 +145,7 @@ export function RepoSetupForm({
         <div className="flex flex-col gap-2">
           <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
           {loadingRepos ? (
-            <p className="text-[0.75rem] opacity-50">Loading repositories...</p>
+            <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
           ) : (
             <Select
               items={repoItems}
@@ -216,98 +214,50 @@ export function RepoSetupForm({
 
         <div className="flex flex-col gap-2">
           <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version trigger</label>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="any"
-                checked={versionStrategy === "any"}
-                onChange={() => {
-                  setVersionStrategy("any");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>Every version increase</span>
-            </label>
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="major-only"
-                checked={versionStrategy === "major-only"}
-                onChange={() => {
-                  setVersionStrategy("major-only");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>Major versions only</span>
-            </label>
-          </div>
+          <RadioGroup
+            items={[
+              { value: "any", label: "Every version increase" },
+              { value: "major-only", label: "Major versions only" },
+            ]}
+            value={versionStrategy}
+            onValueChange={(val) => {
+              setVersionStrategy(val as "any" | "major-only");
+              setSetupSaved(false);
+            }}
+            disabled={loading}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Publish mode</label>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="auto"
-                checked={publishMode === "auto"}
-                onChange={() => {
-                  setPublishMode("auto");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>Auto-publish changelogs</span>
-            </label>
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="draft"
-                checked={publishMode === "draft"}
-                onChange={() => {
-                  setPublishMode("draft");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>Draft and review</span>
-            </label>
-          </div>
+          <RadioGroup
+            items={[
+              { value: "auto", label: "Auto-publish changelogs" },
+              { value: "draft", label: "Draft and review" },
+            ]}
+            value={publishMode}
+            onValueChange={(val) => {
+              setPublishMode(val as "auto" | "draft");
+              setSetupSaved(false);
+            }}
+            disabled={loading}
+          />
         </div>
 
         <div className="flex flex-col gap-2">
           <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version source</label>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="auto"
-                checked={versionSource === "auto"}
-                onChange={() => {
-                  setVersionSource("auto");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>Auto-detect (package.json, Cargo.toml, etc.)</span>
-            </label>
-            <label className="flex items-center gap-2 text-[0.75rem]">
-              <input
-                type="radio"
-                value="uncommit"
-                checked={versionSource === "uncommit"}
-                onChange={() => {
-                  setVersionSource("uncommit");
-                  setSetupSaved(false);
-                }}
-                disabled={loading}
-              />
-              <span>uncommit.json</span>
-            </label>
-          </div>
+          <RadioGroup
+            items={[
+              { value: "auto", label: "Auto-detect (package.json, Cargo.toml, etc.)" },
+              { value: "uncommit", label: "uncommit.json" },
+            ]}
+            value={versionSource}
+            onValueChange={(val) => {
+              setVersionSource(val as "auto" | "uncommit");
+              setSetupSaved(false);
+            }}
+            disabled={loading}
+          />
         </div>
 
         {message && (
@@ -323,7 +273,7 @@ export function RepoSetupForm({
         )}
 
         <Button onClick={handleSave} disabled={!selectedRepo || loading} fullWidth>
-          {loading ? "Saving..." : "Save setup"}
+          {loading ? "Saving…" : "Save setup"}
         </Button>
 
         {setupSaved && (
@@ -339,35 +289,6 @@ export function RepoSetupForm({
               "Set NEXT_PUBLIC_GITHUB_APP_INSTALL_URL to show the installation link."
             )}
           </div>
-        )}
-
-        {userRepos && userRepos.length > 0 && (
-          <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-4 text-[0.75rem]">
-            <div className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Your repos</div>
-            <ul className="mt-2 flex flex-col gap-2">
-              {userRepos.map((repo) => (
-                <li key={repo._id} className="flex items-center justify-between gap-3">
-                  <span>
-                    {repo.repoOwner}/{repo.repoName}
-                  </span>
-                  <span className="opacity-50">
-                    {repo.publishMode === "auto" ? "Auto" : "Draft"} · {repo.versionStrategy}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/dashboard" className="underline underline-offset-4">
-              Go to dashboard
-            </Link>
-          </div>
-        )}
-
-        {showAboutLink && (
-          <p className="mt-4 text-center text-[0.75rem] opacity-50">
-            <Link href="/about" className="underline underline-offset-4">
-              What is this?
-            </Link>
-          </p>
         )}
       </div>
     </div>

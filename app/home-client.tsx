@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Authenticated, Unauthenticated, useQuery } from "convex/react";
+import { Authenticated, Unauthenticated, useQuery, useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/Button";
-import { RepoSetupForm } from "@/components/RepoSetupForm";
+import { Select } from "@/components/Select";
 
 export default function HomeClient() {
   return (
@@ -60,18 +61,71 @@ function LoginSection() {
 
 function SetupSection() {
   const currentUser = useQuery(api.users.getCurrentUser);
+  const fetchRepos = useAction(api.github.fetchUserRepos);
+  const { signOut } = useAuthActions();
+  const router = useRouter();
+
   const [selectedRepo, setSelectedRepo] = useState("");
+  const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string; id?: number }>>([]);
+  const [loadingRepos, setLoadingRepos] = useState(true);
+
+  useEffect(() => {
+    if (currentUser) {
+      setLoadingRepos(true);
+      fetchRepos({})
+        .then(setRepos)
+        .catch((err) => {
+          if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {
+            void signOut();
+          }
+        })
+        .finally(() => setLoadingRepos(false));
+    }
+  }, [currentUser, fetchRepos, signOut]);
+
+  const repoItems = useMemo(
+    () =>
+      [...repos]
+        .sort((a, b) => a.fullName.localeCompare(b.fullName))
+        .map((repo) => ({
+          value: repo.fullName,
+          label: repo.fullName,
+        })),
+    [repos]
+  );
 
   if (currentUser === undefined) {
     return (
       <div className="flex flex-col items-center gap-2">
-        <p className="text-[0.75rem] opacity-50">Loading...</p>
+        <p className="text-[0.75rem] opacity-50">Loading…</p>
       </div>
     );
   }
 
   return (
-    <RepoSetupForm selectedRepo={selectedRepo} onSelectedRepoChange={setSelectedRepo} showAboutLink />
+    <div className="flex flex-col gap-4 text-left">
+      <div className="flex flex-col gap-2">
+        <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
+        {loadingRepos ? (
+          <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
+        ) : (
+          <Select
+            items={repoItems}
+            value={selectedRepo}
+            onValueChange={setSelectedRepo}
+            placeholder="Select a repository"
+          />
+        )}
+      </div>
+      
+      <Button 
+        onClick={() => router.push("/dashboard")} 
+        disabled={!selectedRepo}
+        fullWidth
+      >
+        Continue to dashboard
+      </Button>
+    </div>
   );
 }
 
