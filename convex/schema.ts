@@ -13,7 +13,13 @@ export default defineSchema({
     phoneVerificationTime: v.optional(v.number()),
     isAnonymous: v.optional(v.boolean()),
     githubAccessToken: v.optional(v.string()),
-  }).index("email", ["email"]),
+    subscriptionStatus: v.optional(v.string()),
+    subscriptionTier: v.optional(v.string()),
+    subscriptionExpiresAt: v.optional(v.number()),
+    kofiEmail: v.optional(v.string()),
+  })
+    .index("email", ["email"])
+    .index("by_kofi_email", ["kofiEmail"]),
   installations: defineTable({
     userId: v.id("users"),
     repoOwner: v.string(),

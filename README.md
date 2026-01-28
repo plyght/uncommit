@@ -106,4 +106,4 @@ Requires Bun runtime. Key dependencies: Next.js 14, Convex, @convex-dev/auth, @b
 
 ## License
 
-MIT License
+[Elastic License 2.0](./LICENSE) — Source available. Free to use, modify, and learn from. Cannot be offered as a competing hosted service.

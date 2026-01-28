@@ -15,6 +15,7 @@ type DashboardTab = "release" | "changelogs" | "settings";
 
 export default function DashboardPage() {
   const repos = useQuery(api.repos.getUserRepos);
+  const subscription = useQuery(api.users.getCurrentUserSubscription);
   const { signOut } = useAuthActions();
   const [activeTab, setActiveTab] = useState<DashboardTab>("release");
   const [activeRepo, setActiveRepo] = useState("");
@@ -100,6 +101,31 @@ export default function DashboardPage() {
           </nav>
         </div>
         <div className="flex flex-col gap-2">
+          <div className="mb-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg)] px-3 py-2">
+            {subscription === undefined ? (
+              <div className="text-[0.75rem] opacity-50">Loading plan…</div>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <div className="text-[0.75rem] font-medium">
+                  {subscription?.tier === "pro" ? "Pro" : subscription?.tier === "supporter" ? "Supporter" : "Free"}
+                </div>
+                {subscription?.isActive ? (
+                  <div className="text-[0.75rem] opacity-50">
+                    Active until {subscription.expiresAt ? new Date(subscription.expiresAt).toLocaleDateString() : "N/A"}
+                  </div>
+                ) : (
+                  <a
+                    href="https://ko-fi.com/uncommit"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 text-[0.75rem] text-[var(--accent)] underline underline-offset-4"
+                  >
+                    Upgrade
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
           <Button onClick={() => void signOut()} className="w-full">
             Log out
           </Button>

@@ -20,6 +20,7 @@ export function RepoSetupForm({
 }: RepoSetupFormProps) {
   const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
+  const subscription = useQuery(api.users.getCurrentUserSubscription);
   const fetchRepos = useAction(api.github.fetchUserRepos);
   const saveRepoSettings = useMutation(api.repos.saveRepoSettings);
   const userRepos = useQuery(api.repos.getUserRepos);
@@ -193,15 +194,31 @@ export function RepoSetupForm({
         <div className="flex flex-col gap-2">
           <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Changelog domain</label>
           {planType === "paid" ? (
-            <Input
-              value={customDomain}
-              onChange={(e) => {
-                setCustomDomain(e.target.value);
-                setSetupSaved(false);
-              }}
-              placeholder="changelog.yourdomain.com"
-              disabled={loading}
-            />
+            <>
+              <Input
+                value={customDomain}
+                onChange={(e) => {
+                  setCustomDomain(e.target.value);
+                  setSetupSaved(false);
+                }}
+                placeholder="changelog.yourdomain.com"
+                disabled={loading || !subscription?.isActive}
+                className={!subscription?.isActive ? "opacity-50" : ""}
+              />
+              {!subscription?.isActive && (
+                <div className="text-[0.6875rem] leading-relaxed opacity-75">
+                  Custom domains require a paid plan.{" "}
+                  <a 
+                    href="https://ko-fi.com/uncommit" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-4"
+                  >
+                    Upgrade here
+                  </a>
+                </div>
+              )}
+            </>
           ) : (
             <div className="text-[0.6875rem] leading-relaxed opacity-50">
               Free plan uses a slug like{" "}

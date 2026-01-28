@@ -50,6 +50,17 @@ http.route({
       timestamp: Date.now(),
     });
 
+    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+    const expiresAt = Date.now() + thirtyDaysMs;
+    const tier = data.tier_name || (data.type === "Subscription" ? "supporter" : "supporter");
+
+    await ctx.runMutation(internal.kofi.updateUserSubscription, {
+      email: data.email,
+      status: "active",
+      tier,
+      expiresAt,
+    });
+
     return new Response(null, { status: 200 });
   }),
 });
