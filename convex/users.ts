@@ -1,4 +1,4 @@
-import { query, internalQuery, mutation } from "./_generated/server";
+import { query, internalQuery, mutation, internalMutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 
@@ -67,5 +67,21 @@ export const linkKofiEmail = mutation({
       throw new Error("Not authenticated");
     }
     await ctx.db.patch(userId, { kofiEmail: args.kofiEmail });
+  },
+});
+
+export const devSetSubscription = internalMutation({
+  args: {
+    userId: v.id("users"),
+    status: v.string(),
+    tier: v.string(),
+    daysUntilExpiry: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      subscriptionStatus: args.status,
+      subscriptionTier: args.tier,
+      subscriptionExpiresAt: Date.now() + args.daysUntilExpiry * 24 * 60 * 60 * 1000,
+    });
   },
 });

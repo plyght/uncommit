@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
 import "./styles.css";
 
-const productionUrl = "https://0ni.uncommit.sh";
+const productionUrl = "https://uncommit.sh";
 const title = "<uncommit/>";
 const description = "AI-generated release notes from your code";
 

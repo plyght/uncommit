@@ -68,6 +68,7 @@ export async function POST(req: Request) {
         installationId: payload.installation.id,
         repoOwner: payload.repository.owner.login,
         repoName: payload.repository.name,
+        webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || "",
       });
     }
     return NextResponse.json({ ok: true });
@@ -79,6 +80,7 @@ export async function POST(req: Request) {
       installationId: payload.installation.id,
       repoOwner: payload.repository.owner.login,
       repoName: payload.repository.name,
+      webhookSecret: process.env.GITHUB_WEBHOOK_SECRET || "",
     });
   }
 

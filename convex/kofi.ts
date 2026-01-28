@@ -1,4 +1,4 @@
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const updateUserSubscription = internalMutation({
@@ -32,13 +32,6 @@ export const updateUserSubscription = internalMutation({
     });
 
     return user._id;
-  },
-});
-
-export const listSubscriptions = query({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query("subscriptions").collect();
   },
 });
 

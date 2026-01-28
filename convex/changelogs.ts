@@ -30,6 +30,24 @@ export const listChangelogsForRepo = query({
   },
 });
 
+export const listAllChangelogsForRepo = query({
+  args: { repoId: v.id("repos") },
+  handler: async (ctx, { repoId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+    const repo = await ctx.db.get(repoId);
+    if (!repo || repo.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+    const entries = await ctx.db
+      .query("changelogs")
+      .withIndex("by_repo", (q) => q.eq("repoId", repoId))
+      .order("desc")
+      .collect();
+    return entries;
+  },
+});
+
 export const getPublicReleaseNotes = query({
   args: { slug: v.optional(v.string()), domain: v.optional(v.string()) },
   handler: async (ctx, { slug, domain }) => {

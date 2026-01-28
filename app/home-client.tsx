@@ -32,6 +32,7 @@ export default function HomeClient() {
 
 function LoginSection() {
   const { signIn } = useAuthActions();
+  const isDevMode = typeof window !== "undefined" && window.location.hostname === "localhost";
 
   const handleSignIn = async () => {
     try {
@@ -44,12 +45,21 @@ function LoginSection() {
     }
   };
 
+  const handleDevSignIn = async () => {
+    await signIn("anonymous");
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       <Button onClick={() => void handleSignIn()} className="gap-2">
         <GitHubIcon />
         Sign in with GitHub
       </Button>
+      {isDevMode && (
+        <Button onClick={() => void handleDevSignIn()} className="gap-2">
+          Dev Login (skip OAuth)
+        </Button>
+      )}
       <p className="text-[0.75rem] opacity-50">
         <Link href="/about" className="underline underline-offset-4">
           What is this?

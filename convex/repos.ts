@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -131,8 +131,13 @@ export const bindInstallationToRepo = mutation({
     installationId: v.number(),
     repoOwner: v.string(),
     repoName: v.string(),
+    webhookSecret: v.optional(v.string()),
   },
-  handler: async (ctx, { githubRepoId, installationId, repoOwner, repoName }) => {
+  handler: async (ctx, { githubRepoId, installationId, repoOwner, repoName, webhookSecret }) => {
+    const expectedSecret = process.env.GITHUB_WEBHOOK_SECRET;
+    if (expectedSecret && webhookSecret !== expectedSecret) {
+      throw new Error("Unauthorized");
+    }
     const repo =
       (await ctx.db
         .query("repos")

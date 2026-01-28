@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -35,6 +35,14 @@ export function RepoSetupForm({
   const [loadingRepos, setLoadingRepos] = useState(true);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [setupSaved, setSetupSaved] = useState(false);
+  const paymentPopup = useRef<Window | null>(null);
+
+  useEffect(() => {
+    if (subscription?.isActive && paymentPopup.current && !paymentPopup.current.closed) {
+      paymentPopup.current.close();
+      paymentPopup.current = null;
+    }
+  }, [subscription?.isActive]);
 
   useEffect(() => {
     if (currentUser) {
@@ -208,14 +216,15 @@ export function RepoSetupForm({
               {!subscription?.isActive && (
                 <div className="text-[0.6875rem] leading-relaxed opacity-75">
                   Custom domains require a paid plan.{" "}
-                  <a 
-                    href="https://ko-fi.com/uncommit" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => {
+                      paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100");
+                    }}
                     className="underline underline-offset-4"
                   >
                     Upgrade here
-                  </a>
+                  </button>
                 </div>
               )}
             </>
