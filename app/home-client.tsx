@@ -47,14 +47,14 @@ function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <main className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-[520px] text-center">
-        <header className="mb-10">
-          <h1 className="mb-2 text-[1.625rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
-          <p className="text-[0.8125rem] opacity-50">AI-generated changelogs from your code</p>
+        <header className="mb-8 sm:mb-10">
+          <h1 className="mb-1.5 text-[1.5rem] font-semibold tracking-[-0.02em] sm:mb-2 sm:text-[1.625rem]">&lt;uncommit/&gt;</h1>
+          <p className="text-[0.75rem] opacity-50 sm:text-[0.8125rem]">AI-generated changelogs from your code</p>
         </header>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-3 sm:gap-4">
           <Button onClick={() => void handleSignIn()} className="gap-2">
             <GitHubIcon />
             Sign in with GitHub
@@ -66,8 +66,8 @@ function LoginPage() {
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-4 pt-8 text-[0.75rem]">
-          <Link href="/about" className="opacity-50 transition-opacity duration-150 hover:opacity-100">
+        <div className="flex items-center justify-center pt-6 text-[0.75rem] sm:pt-8">
+          <Link href="/about" className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100">
             What is this? →
           </Link>
         </div>
@@ -107,26 +107,26 @@ function DashboardPage() {
 
   if (repos === undefined) {
     return (
-      <main className="flex min-h-screen items-center justify-center p-6">
+      <main className="flex h-[100dvh] items-center justify-center overflow-hidden p-4 sm:p-6">
         <div className="w-full max-w-[520px] text-center">
-          <p className="text-[0.8125rem] opacity-50">Loading…</p>
+          <p className="text-[0.75rem] opacity-50 sm:text-[0.8125rem]">Loading…</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
+    <main className="flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-[520px]">
-        <header className="mb-10 text-center">
-          <h1 className="text-[1.625rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+        <header className="mb-6 text-center sm:mb-10">
+          <h1 className="text-[1.5rem] font-semibold tracking-[-0.02em] sm:text-[1.625rem]">&lt;uncommit/&gt;</h1>
         </header>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4 sm:gap-5">
           {repos.length > 0 && !devShowEmpty ? (
             <>
-              <div className="flex flex-col gap-2">
-                <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Repository</label>
                 <div className="flex items-center gap-2">
                   <Select
                     items={projectItems}
@@ -167,7 +167,7 @@ function DashboardPage() {
             </div>
           )}
 
-          <div className="flex flex-col gap-3 pt-4 text-[0.75rem] sm:flex-row sm:items-center sm:justify-between sm:pt-3">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 pt-3 text-[0.6875rem] sm:text-[0.75rem]">
             <button
               type="button"
               onClick={() => void signOut()}
@@ -175,7 +175,7 @@ function DashboardPage() {
             >
               ← Log out
             </button>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 sm:gap-x-4">
               {subscription?.isActive ? (
                 <span className="opacity-30">Pro</span>
               ) : (
@@ -255,7 +255,7 @@ function ChangelogList({
         {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="flex flex-col gap-3 border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+          className="flex items-center justify-between gap-3 border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 sm:px-4 sm:py-3"
         >
             <div className="flex flex-col gap-1">
               <Skeleton width={180} height={16} />
@@ -286,11 +286,11 @@ function ChangelogList({
       {changelogs.map((post) => (
         <div
           key={post._id}
-          className="flex flex-col gap-3 border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+          className="flex items-center justify-between gap-2 border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 sm:gap-4 sm:px-4 sm:py-3"
         >
-          <div className="flex flex-col gap-1 overflow-hidden">
-            <div className="truncate text-[0.8125rem]">{post.title}</div>
-            <div className="flex items-center gap-2 text-[0.6875rem]">
+          <Link href={`/dashboard/edit/${post._id}`} className="flex min-w-0 flex-col gap-0.5 transition-opacity hover:opacity-70">
+            <div className="truncate text-[0.75rem] sm:text-[0.8125rem]">{post.title}</div>
+            <div className="flex items-center gap-1.5 text-[0.625rem] sm:gap-2 sm:text-[0.6875rem]">
               <span
                 className={`rounded-[var(--radius)] px-1.5 py-0.5 ${
                   post.type === "release"
@@ -302,11 +302,11 @@ function ChangelogList({
               </span>
               <span className="opacity-50">{post.status}</span>
             </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
+          </Link>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <Link
               href={`/dashboard/edit/${post._id}`}
-              className="text-[0.6875rem] underline underline-offset-4 opacity-70 hover:opacity-100"
+              className="hidden text-[0.6875rem] underline underline-offset-4 opacity-70 hover:opacity-100 sm:block"
             >
               Edit
             </Link>

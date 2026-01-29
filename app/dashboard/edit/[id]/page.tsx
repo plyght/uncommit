@@ -59,7 +59,7 @@ export default function EditChangelogPage() {
 
   if (!postId) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <main className="flex h-[100dvh] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
         <div className="w-full max-w-[900px] text-left">
           <p className="text-[0.75rem] opacity-50">Changelog not found.</p>
         </div>
@@ -69,7 +69,7 @@ export default function EditChangelogPage() {
 
   if (currentUser === undefined || data === undefined) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <main className="flex h-[100dvh] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
         <div className="w-full max-w-[900px] text-left">
           <p className="text-[0.75rem] opacity-50">Loading…</p>
         </div>
@@ -79,7 +79,7 @@ export default function EditChangelogPage() {
 
   if (!currentUser) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <main className="flex h-[100dvh] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
         <div className="w-full max-w-[900px] text-left">
           <p className="text-[0.75rem] opacity-50">Sign in to edit posts.</p>
           <Link href="/" className="text-[0.75rem] underline underline-offset-4">
@@ -92,7 +92,7 @@ export default function EditChangelogPage() {
 
   if (!data) {
     return (
-      <main className="flex min-h-screen items-center justify-center px-6 py-12">
+      <main className="flex h-[100dvh] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12">
         <div className="w-full max-w-[900px] text-left">
           <p className="text-[0.75rem] opacity-50">Changelog not found.</p>
         </div>
@@ -109,7 +109,7 @@ export default function EditChangelogPage() {
   ];
 
   return (
-    <main className="flex min-h-screen items-start justify-center px-6 py-12">
+    <main className="flex min-h-[100dvh] items-start justify-center px-4 py-6 sm:px-6 sm:py-12">
       <div className="w-full max-w-[900px] text-left">
         <header className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/dashboard" className="text-[0.75rem] opacity-50 transition-opacity hover:opacity-100">

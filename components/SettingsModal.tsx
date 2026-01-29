@@ -151,26 +151,26 @@ export function SettingsModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative max-h-[100dvh] w-full max-w-[480px] overflow-y-auto border border-[var(--border)] bg-[var(--bg)] p-5 shadow-lg sm:max-h-[90vh] sm:p-6">
+      <div className="relative max-h-[100dvh] w-full max-w-[480px] overflow-y-auto border border-[var(--border)] bg-[var(--bg)] p-4 shadow-lg sm:max-h-[90vh] sm:p-6">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 opacity-50 hover:opacity-100"
+          className="absolute right-3 top-3 p-1 opacity-50 hover:opacity-100 sm:right-4 sm:top-4"
           aria-label="Close"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
         </button>
 
-        <h2 className="mb-6 text-[1rem] font-semibold">
+        <h2 className="mb-4 text-[0.9375rem] font-semibold sm:mb-6 sm:text-[1rem]">
           {mode === "add" ? "Add repository" : "Settings"}
         </h2>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4 sm:gap-5">
           {mode === "add" ? (
-            <div className="flex flex-col gap-2">
-              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Repository</label>
               {loadingRepos ? (
                 <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
               ) : (
@@ -191,8 +191,8 @@ export function SettingsModal({
             <div className="text-[0.8125rem] opacity-70">{selectedRepo}</div>
           )}
 
-          <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Custom domain</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Custom domain</label>
             {subscription?.isActive ? (
               <Input
                 value={customDomain}
@@ -220,8 +220,8 @@ export function SettingsModal({
             )}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
               Version trigger
               <Hint text="Trigger on every bump, or major versions only (1.0 → 2.0)" />
             </label>
@@ -239,8 +239,8 @@ export function SettingsModal({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
               Publish mode
               <Hint text="Publish immediately or save as draft to review first" />
             </label>
@@ -258,8 +258,8 @@ export function SettingsModal({
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
               Version source
               <Hint text="Reads package.json, Cargo.toml, etc. or specify in uncommit.json" />
             </label>
