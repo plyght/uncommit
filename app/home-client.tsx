@@ -140,7 +140,7 @@ function DashboardPage() {
                       setSettingsMode("edit");
                       setSettingsOpen(true);
                     }}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] text-[var(--fg)] opacity-60 transition-opacity hover:opacity-100 sm:h-9 sm:w-9"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center border border-[var(--border)] bg-[var(--card-bg)] text-[var(--fg)] opacity-60 transition-opacity hover:opacity-100 sm:h-9 sm:w-9"
                     aria-label="Settings"
                   >
                     <Settings size={16} />

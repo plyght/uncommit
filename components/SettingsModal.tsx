@@ -169,144 +169,175 @@ export function SettingsModal({
 
         <div className="flex flex-col gap-4 sm:gap-5">
           {mode === "add" ? (
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Repository</label>
-              {loadingRepos ? (
-                <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
-              ) : (
-                <Select
-                  items={repoItems}
-                  value={selectedRepo}
-                  onValueChange={(value) => {
-                    onSelectedRepoChange(value);
+            <>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Repository</label>
+                {loadingRepos ? (
+                  <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
+                ) : (
+                  <Select
+                    items={repoItems}
+                    value={selectedRepo}
+                    onValueChange={(value) => {
+                      onSelectedRepoChange(value);
+                      setSetupSaved(false);
+                      setMessage(null);
+                    }}
+                    placeholder="Select a repository"
+                    disabled={loading}
+                  />
+                )}
+              </div>
+
+              {message && (
+                <div
+                  className={`border px-3 py-2 text-[0.75rem] ${
+                    message.type === "success"
+                      ? "border-[var(--success)] text-[var(--success)]"
+                      : "border-[var(--error)] text-[var(--error)]"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
+              <Button
+                onClick={handleSave}
+                disabled={!selectedRepo || loading}
+                fullWidth
+              >
+                {loading ? "Adding…" : "Add repository"}
+              </Button>
+
+              {setupSaved && installUrl && (
+                <div className="text-[0.6875rem] leading-relaxed opacity-50">
+                  <a href={installUrl} className="underline underline-offset-4" target="_blank" rel="noopener noreferrer">
+                    Install GitHub App
+                  </a>{" "}
+                  to start monitoring. Configure settings via the gear icon.
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="text-[0.75rem] opacity-50 sm:text-[0.8125rem]">{selectedRepo}</div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Custom domain</label>
+                {subscription?.isActive ? (
+                  <Input
+                    value={customDomain}
+                    onChange={(e) => {
+                      setCustomDomain(e.target.value);
+                      setSetupSaved(false);
+                    }}
+                    placeholder="changelog.yourdomain.com"
+                    disabled={loading}
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const w = 480, h = 720;
+                      const left = (screen.width - w) / 2;
+                      const top = (screen.height - h) / 2;
+                      paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
+                    }}
+                    className="flex h-10 items-center justify-between border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100 sm:h-9"
+                  >
+                    <span className="opacity-50">Upgrade to use custom domain</span>
+                    <span>$15/mo →</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
+                  Version trigger
+                  <Hint text="Trigger on every bump, or major versions only (1.0 → 2.0)" />
+                </label>
+                <RadioGroup
+                  items={[
+                    { value: "any", label: "Every version" },
+                    { value: "major-only", label: "Major only" },
+                  ]}
+                  value={versionStrategy}
+                  onValueChange={(val) => {
+                    setVersionStrategy(val as "any" | "major-only");
                     setSetupSaved(false);
-                    setMessage(null);
                   }}
-                  placeholder="Select a repository"
                   disabled={loading}
                 />
-              )}
-            </div>
-          ) : (
-            <div className="text-[0.8125rem] opacity-70">{selectedRepo}</div>
-          )}
+              </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Custom domain</label>
-            {subscription?.isActive ? (
-              <Input
-                value={customDomain}
-                onChange={(e) => {
-                  setCustomDomain(e.target.value);
-                  setSetupSaved(false);
-                }}
-                placeholder="changelog.yourdomain.com"
-                disabled={loading}
-              />
-            ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const w = 480, h = 720;
-                    const left = (screen.width - w) / 2;
-                    const top = (screen.height - h) / 2;
-                    paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
+              <div className="flex flex-col gap-1.5">
+                <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
+                  Publish mode
+                  <Hint text="Publish immediately or save as draft to review first" />
+                </label>
+                <RadioGroup
+                  items={[
+                    { value: "auto", label: "Auto-publish" },
+                    { value: "draft", label: "Draft first" },
+                  ]}
+                  value={publishMode}
+                  onValueChange={(val) => {
+                    setPublishMode(val as "auto" | "draft");
+                    setSetupSaved(false);
                   }}
-                  className="flex h-10 items-center justify-between border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100 sm:h-9"
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
+                  Version source
+                  <Hint text="Reads package.json, Cargo.toml, etc. or specify in uncommit.json" />
+                </label>
+                <RadioGroup
+                  items={[
+                    { value: "auto", label: "Auto-detect" },
+                    { value: "uncommit", label: "uncommit.json" },
+                  ]}
+                  value={versionSource}
+                  onValueChange={(val) => {
+                    setVersionSource(val as "auto" | "uncommit");
+                    setSetupSaved(false);
+                  }}
+                  disabled={loading}
+                />
+              </div>
+
+              {message && (
+                <div
+                  className={`border px-3 py-2 text-[0.75rem] ${
+                    message.type === "success"
+                      ? "border-[var(--success)] text-[var(--success)]"
+                      : "border-[var(--error)] text-[var(--error)]"
+                  }`}
                 >
-                <span className="opacity-50">Upgrade to use custom domain</span>
-                <span>$15/mo →</span>
-              </button>
-            )}
-          </div>
+                  {message.text}
+                </div>
+              )}
 
-          <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
-              Version trigger
-              <Hint text="Trigger on every bump, or major versions only (1.0 → 2.0)" />
-            </label>
-            <RadioGroup
-              items={[
-                { value: "any", label: "Every version" },
-                { value: "major-only", label: "Major only" },
-              ]}
-              value={versionStrategy}
-              onValueChange={(val) => {
-                setVersionStrategy(val as "any" | "major-only");
-                setSetupSaved(false);
-              }}
-              disabled={loading}
-            />
-          </div>
+              <Button
+                onClick={handleSave}
+                disabled={!selectedRepo || loading}
+                fullWidth
+              >
+                {loading ? "Saving…" : "Save"}
+              </Button>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
-              Publish mode
-              <Hint text="Publish immediately or save as draft to review first" />
-            </label>
-            <RadioGroup
-              items={[
-                { value: "auto", label: "Auto-publish" },
-                { value: "draft", label: "Draft first" },
-              ]}
-              value={publishMode}
-              onValueChange={(val) => {
-                setPublishMode(val as "auto" | "draft");
-                setSetupSaved(false);
-              }}
-              disabled={loading}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
-              Version source
-              <Hint text="Reads package.json, Cargo.toml, etc. or specify in uncommit.json" />
-            </label>
-            <RadioGroup
-              items={[
-                { value: "auto", label: "Auto-detect" },
-                { value: "uncommit", label: "uncommit.json" },
-              ]}
-              value={versionSource}
-              onValueChange={(val) => {
-                setVersionSource(val as "auto" | "uncommit");
-                setSetupSaved(false);
-              }}
-              disabled={loading}
-            />
-          </div>
-
-          {message && (
-            <div
-              className={`border px-3 py-2 text-[0.75rem] ${
-                message.type === "success"
-                  ? "border-[var(--success)] text-[var(--success)]"
-                  : "border-[var(--error)] text-[var(--error)]"
-              }`}
-            >
-              {message.text}
-            </div>
+              {installUrl && (
+                <div className="text-[0.6875rem] leading-relaxed opacity-50">
+                  <a href={installUrl} className="underline underline-offset-4" target="_blank" rel="noopener noreferrer">
+                    Install GitHub App
+                  </a>{" "}
+                  to start monitoring.
+                </div>
+              )}
+            </>
           )}
-
-          <Button
-            onClick={handleSave}
-            disabled={!selectedRepo || loading}
-            fullWidth
-          >
-            {loading ? "Saving…" : mode === "add" ? "Add repository" : "Save"}
-          </Button>
-
-          {setupSaved && installUrl && (
-            <div className="text-[0.6875rem] leading-relaxed opacity-50">
-              <a href={installUrl} className="underline underline-offset-4" target="_blank" rel="noopener noreferrer">
-                Install GitHub App
-              </a>{" "}
-              to start monitoring.
-            </div>
-          )}
-
-
         </div>
       </div>
     </div>
