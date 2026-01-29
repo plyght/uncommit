@@ -1,38 +1,35 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Authenticated, Unauthenticated, useQuery, useAction } from "convex/react";
+import { Authenticated, Unauthenticated, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/Button";
 import { Select } from "@/components/Select";
+import { SettingsModal } from "@/components/SettingsModal";
+import { Skeleton } from "@/components/Skeleton";
+import { Settings, Trash2 } from "lucide-react";
+
+const isDev = typeof window !== "undefined" && window.location.hostname === "localhost";
 
 export default function HomeClient() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-8 py-12">
-      <div className="w-full max-w-[420px] text-center">
-        <header className="mb-12">
-          <h1 className="mb-2 text-[1.75rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
-          <p className="text-[0.75rem] opacity-50">AI-generated changelogs from your code</p>
-        </header>
+    <>
+      <Unauthenticated>
+        <LoginPage />
+      </Unauthenticated>
 
-        <Unauthenticated>
-          <LoginSection />
-        </Unauthenticated>
-
-        <Authenticated>
-          <SetupSection />
-        </Authenticated>
-      </div>
-    </main>
+      <Authenticated>
+        <DashboardPage />
+      </Authenticated>
+    </>
   );
 }
 
-function LoginSection() {
+function LoginPage() {
   const { signIn } = useAuthActions();
-  const isDevMode = typeof window !== "undefined" && window.location.hostname === "localhost";
 
   const handleSignIn = async () => {
     try {
@@ -50,91 +47,286 @@ function LoginSection() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <Button onClick={() => void handleSignIn()} className="gap-2">
-        <GitHubIcon />
-        Sign in with GitHub
-      </Button>
-      {isDevMode && (
-        <Button onClick={() => void handleDevSignIn()} className="gap-2">
-          Dev Login (skip OAuth)
-        </Button>
-      )}
-      <p className="text-[0.75rem] opacity-50">
-        <Link href="/about" className="underline underline-offset-4">
-          What is this?
-        </Link>
-      </p>
-    </div>
+    <main className="flex min-h-screen items-center justify-center p-6">
+      <div className="w-full max-w-[520px] text-center">
+        <header className="mb-10">
+          <h1 className="mb-2 text-[1.625rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+          <p className="text-[0.8125rem] opacity-50">AI-generated changelogs from your code</p>
+        </header>
+
+        <div className="flex flex-col items-center gap-4">
+          <Button onClick={() => void handleSignIn()} className="gap-2">
+            <GitHubIcon />
+            Sign in with GitHub
+          </Button>
+          {isDev && (
+            <Button onClick={() => void handleDevSignIn()} className="gap-2">
+              Dev Login (skip OAuth)
+            </Button>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center gap-4 pt-8 text-[0.75rem]">
+          <Link href="/about" className="opacity-50 transition-opacity duration-150 hover:opacity-100">
+            What is this? →
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
 
-function SetupSection() {
-  const currentUser = useQuery(api.users.getCurrentUser);
-  const fetchRepos = useAction(api.github.fetchUserRepos);
+function DashboardPage() {
+  const repos = useQuery(api.repos.getUserRepos);
+  const subscription = useQuery(api.users.getCurrentUserSubscription);
   const { signOut } = useAuthActions();
-  const router = useRouter();
-
-  const [selectedRepo, setSelectedRepo] = useState("");
-  const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string; id?: number }>>([]);
-  const [loadingRepos, setLoadingRepos] = useState(true);
+  const [activeRepo, setActiveRepo] = useState("");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsMode, setSettingsMode] = useState<"add" | "edit">("edit");
+  const [devShowEmpty, setDevShowEmpty] = useState(false);
 
   useEffect(() => {
-    if (currentUser) {
-      setLoadingRepos(true);
-      fetchRepos({})
-        .then(setRepos)
-        .catch((err) => {
-          if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {
-            void signOut();
-          }
-        })
-        .finally(() => setLoadingRepos(false));
+    if (!repos || repos.length === 0) return;
+    if (!activeRepo) {
+      setActiveRepo(`${repos[0].repoOwner}/${repos[0].repoName}`);
     }
-  }, [currentUser, fetchRepos, signOut]);
+  }, [repos, activeRepo]);
 
-  const repoItems = useMemo(
+  const projectItems = useMemo(
     () =>
-      [...repos]
-        .sort((a, b) => a.fullName.localeCompare(b.fullName))
-        .map((repo) => ({
-          value: repo.fullName,
-          label: repo.fullName,
-        })),
+      (repos ?? []).map((repo) => ({
+        value: `${repo.repoOwner}/${repo.repoName}`,
+        label: `${repo.repoOwner}/${repo.repoName}`,
+      })),
     [repos]
   );
 
-  if (currentUser === undefined) {
+  const activeRepoData = repos?.find(
+    (repo) => `${repo.repoOwner}/${repo.repoName}` === activeRepo
+  );
+
+  if (repos === undefined) {
     return (
-      <div className="flex flex-col items-center gap-2">
-        <p className="text-[0.75rem] opacity-50">Loading…</p>
+      <main className="flex min-h-screen items-center justify-center p-6">
+        <div className="w-full max-w-[520px] text-center">
+          <p className="text-[0.8125rem] opacity-50">Loading…</p>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="flex min-h-screen items-center justify-center p-6">
+      <div className="w-full max-w-[520px]">
+        <header className="mb-10 text-center">
+          <h1 className="text-[1.625rem] font-semibold tracking-[-0.02em]">&lt;uncommit/&gt;</h1>
+        </header>
+
+        <div className="flex flex-col gap-5">
+          {repos.length > 0 && !devShowEmpty ? (
+            <>
+              <div className="flex flex-col gap-2">
+                <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
+                <div className="flex items-center gap-2">
+                  <Select
+                    items={projectItems}
+                    value={activeRepo}
+                    onValueChange={setActiveRepo}
+                    placeholder="Select a repository"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSettingsMode("edit");
+                      setSettingsOpen(true);
+                    }}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] text-[var(--fg)] opacity-60 transition-opacity hover:opacity-100"
+                    aria-label="Settings"
+                  >
+                    <Settings size={16} />
+                  </button>
+                </div>
+              </div>
+
+              {activeRepoData && (
+                <ChangelogList
+                  repoId={activeRepoData._id}
+                  repoName={`${activeRepoData.repoOwner}/${activeRepoData.repoName}`}
+                />
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-4 py-8">
+              <p className="text-[0.8125rem] opacity-50">No repositories yet.</p>
+              <Button onClick={() => {
+                setSettingsMode("add");
+                setSettingsOpen(true);
+              }}>
+                Add repository
+              </Button>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between pt-3 text-[0.75rem]">
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="opacity-50 transition-opacity duration-150 hover:opacity-100"
+              >
+                ← Log out
+              </button>
+            </div>
+            <div className="flex items-center gap-4">
+              {subscription?.isActive ? (
+                <span className="opacity-30">Pro</span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100")}
+                  className="opacity-50 transition-opacity duration-150 hover:opacity-100"
+                >
+                  Upgrade →
+                </button>
+              )}
+              {repos.length > 0 && !devShowEmpty && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveRepo("");
+                    setSettingsMode("add");
+                    setSettingsOpen(true);
+                  }}
+                  className="opacity-50 transition-opacity duration-150 hover:opacity-100"
+                >
+                  Add repo →
+                </button>
+              )}
+              <Link href="/about" className="opacity-50 transition-opacity duration-150 hover:opacity-100">
+                About →
+              </Link>
+            </div>
+          </div>
+
+          {isDev && (
+            <div className="mt-6 flex items-center gap-3 border-t border-dashed border-[var(--border)] pt-4">
+              <span className="text-[0.625rem] uppercase tracking-wider opacity-30">Dev</span>
+              <button
+                type="button"
+                onClick={() => setDevShowEmpty(!devShowEmpty)}
+                className={`rounded-[var(--radius)] border border-[var(--border)] px-2 py-0.5 text-[0.625rem] transition-colors ${devShowEmpty ? "border-[var(--accent)] bg-[var(--accent)] text-white" : "opacity-50 hover:opacity-100"}`}
+              >
+                Empty state
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <SettingsModal
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        selectedRepo={activeRepo}
+        onSelectedRepoChange={setActiveRepo}
+        mode={settingsMode}
+      />
+    </main>
+  );
+}
+
+function ChangelogList({
+  repoId,
+  repoName,
+}: {
+  repoId: Id<"repos">;
+  repoName: string;
+}) {
+  const changelogs = useQuery(api.changelogs.listAllChangelogsForRepo, { repoId });
+  const publish = useMutation(api.changelogs.publishChangelog);
+  const unpublish = useMutation(api.changelogs.unpublishChangelog);
+  const remove = useMutation(api.changelogs.deleteChangelog);
+
+  if (changelogs === undefined) {
+    return (
+      <div className="flex flex-col gap-3">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between gap-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3"
+          >
+            <div className="flex flex-col gap-1">
+              <Skeleton width={180} height={16} />
+              <Skeleton width={100} height={12} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton width={60} height={28} />
+              <Skeleton width={50} height={28} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (changelogs.length === 0) {
+    return (
+      <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-6">
+        <p className="text-[0.8125rem] opacity-50">
+          No posts yet. They will appear here when version bumps are detected.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 text-left">
-      <div className="flex flex-col gap-2">
-        <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
-        {loadingRepos ? (
-          <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
-        ) : (
-          <Select
-            items={repoItems}
-            value={selectedRepo}
-            onValueChange={setSelectedRepo}
-            placeholder="Select a repository"
-          />
-        )}
-      </div>
-      
-      <Button 
-        onClick={() => router.push("/dashboard")} 
-        disabled={!selectedRepo}
-        fullWidth
-      >
-        Continue to dashboard
-      </Button>
+    <div className="flex flex-col gap-2">
+      {changelogs.map((post) => (
+        <div
+          key={post._id}
+          className="flex items-center justify-between gap-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3"
+        >
+          <div className="flex flex-col gap-1 overflow-hidden">
+            <div className="truncate text-[0.8125rem]">{post.title}</div>
+            <div className="flex items-center gap-2 text-[0.6875rem]">
+              <span
+                className={`rounded-[var(--radius)] px-1.5 py-0.5 ${
+                  post.type === "release"
+                    ? "bg-[var(--accent-subtle)] text-[var(--accent)]"
+                    : "bg-[var(--gray-100)] text-[var(--gray-600)]"
+                }`}
+              >
+                {post.type ?? "changelog"}
+              </span>
+              <span className="opacity-50">{post.status}</span>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              href={`/dashboard/edit/${post._id}`}
+              className="text-[0.6875rem] underline underline-offset-4 opacity-70 hover:opacity-100"
+            >
+              Edit
+            </Link>
+            {post.status === "published" ? (
+              <Button onClick={() => void unpublish({ postId: post._id })}>
+                Unpublish
+              </Button>
+            ) : (
+              <Button onClick={() => void publish({ postId: post._id })}>
+                Publish
+              </Button>
+            )}
+            <button
+              type="button"
+              onClick={() => void remove({ postId: post._id })}
+              className="text-[0.6875rem] opacity-50 hover:opacity-100"
+              aria-label="Delete"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -56,7 +56,7 @@ code {
   --gray-200: oklch(90% 0 0);
   --gray-300: oklch(82% 0 0);
   --gray-600: oklch(45% 0 0);
-  --radius: 0px;
+  --radius: 6px;
   --card-bg: oklch(100% 0 0);
   --card-border: oklch(85% 0 0);
   --accent: oklch(55% 0.12 250);

@@ -14,6 +14,7 @@ type SettingsModalProps = {
   onClose: () => void;
   selectedRepo: string;
   onSelectedRepoChange: (value: string) => void;
+  mode?: "add" | "edit";
 };
 
 export function SettingsModal({
@@ -21,6 +22,7 @@ export function SettingsModal({
   onClose,
   selectedRepo,
   onSelectedRepoChange,
+  mode = "edit",
 }: SettingsModalProps) {
   const { signOut } = useAuthActions();
   const currentUser = useQuery(api.users.getCurrentUser);
@@ -30,7 +32,6 @@ export function SettingsModal({
   const userRepos = useQuery(api.repos.getUserRepos);
 
   const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string; id?: number }>>([]);
-  const [planType, setPlanType] = useState<"free" | "paid">("free");
   const [customDomain, setCustomDomain] = useState("");
   const [versionStrategy, setVersionStrategy] = useState<"any" | "major-only">("any");
   const [publishMode, setPublishMode] = useState<"auto" | "draft">("draft");
@@ -71,7 +72,6 @@ export function SettingsModal({
 
   useEffect(() => {
     if (!selectedRepo || !userRepos) {
-      setPlanType("free");
       setCustomDomain("");
       setVersionStrategy("any");
       setPublishMode("draft");
@@ -84,14 +84,12 @@ export function SettingsModal({
     );
 
     if (selected) {
-      setPlanType((selected.planType as "free" | "paid") ?? "free");
       setCustomDomain(selected.customDomain ?? "");
       setVersionStrategy((selected.versionStrategy as "any" | "major-only") ?? "any");
       setPublishMode((selected.publishMode as "auto" | "draft") ?? "draft");
       setVersionSource((selected.versionSource as "auto" | "uncommit") ?? "auto");
       setSetupSaved(true);
     } else {
-      setPlanType("free");
       setCustomDomain("");
       setVersionStrategy("any");
       setPublishMode("draft");
@@ -121,12 +119,13 @@ export function SettingsModal({
     const [owner, name] = selectedRepo.split("/");
     const selected = repos.find((repo) => repo.fullName === selectedRepo);
     try {
+      const hasPaidFeatures = subscription?.isActive && customDomain;
       await saveRepoSettings({
         githubRepoId: selected?.id,
         repoOwner: owner,
         repoName: name,
-        planType,
-        customDomain: planType === "paid" ? customDomain : undefined,
+        planType: hasPaidFeatures ? "paid" : "free",
+        customDomain: subscription?.isActive ? customDomain : undefined,
         versionStrategy,
         versionSource,
         publishMode,
@@ -164,61 +163,37 @@ export function SettingsModal({
           </svg>
         </button>
 
-        <h2 className="mb-6 text-[1rem] font-semibold">Settings</h2>
+        <h2 className="mb-6 text-[1rem] font-semibold">
+          {mode === "add" ? "Add repository" : "Settings"}
+        </h2>
 
         <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
-            {loadingRepos ? (
-              <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
-            ) : (
-              <Select
-                items={repoItems}
-                value={selectedRepo}
-                onValueChange={(value) => {
-                  onSelectedRepoChange(value);
-                  setSetupSaved(false);
-                  setMessage(null);
-                }}
-                placeholder="Select a repository"
-                disabled={loading}
-              />
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Plan</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                className={`relative flex flex-col gap-0.5 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-2.5 text-left text-[0.6875rem] transition-colors hover:border-[var(--fg)] ${planType === "paid" ? "border-[var(--accent)]" : ""}`}
-                onClick={() => {
-                  setPlanType("paid");
-                  setSetupSaved(false);
-                }}
-              >
-                <div className="font-semibold">$15/mo</div>
-                <div className="opacity-50">Custom domain</div>
-                {planType === "paid" && <Checkmark />}
-              </button>
-              <button
-                type="button"
-                className={`relative flex flex-col gap-0.5 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-2.5 text-left text-[0.6875rem] transition-colors hover:border-[var(--fg)] ${planType === "free" ? "border-[var(--accent)]" : ""}`}
-                onClick={() => {
-                  setPlanType("free");
-                  setSetupSaved(false);
-                }}
-              >
-                <div className="font-semibold">Free</div>
-                <div className="opacity-50">Hosted slug</div>
-                {planType === "free" && <Checkmark />}
-              </button>
-            </div>
-          </div>
-
-          {planType === "paid" && (
+          {mode === "add" ? (
             <div className="flex flex-col gap-2">
-              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Custom domain</label>
+              <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Repository</label>
+              {loadingRepos ? (
+                <p className="text-[0.75rem] opacity-50">Loading repositories…</p>
+              ) : (
+                <Select
+                  items={repoItems}
+                  value={selectedRepo}
+                  onValueChange={(value) => {
+                    onSelectedRepoChange(value);
+                    setSetupSaved(false);
+                    setMessage(null);
+                  }}
+                  placeholder="Select a repository"
+                  disabled={loading}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="text-[0.8125rem] opacity-70">{selectedRepo}</div>
+          )}
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Custom domain</label>
+            {subscription?.isActive ? (
               <Input
                 value={customDomain}
                 onChange={(e) => {
@@ -226,28 +201,27 @@ export function SettingsModal({
                   setSetupSaved(false);
                 }}
                 placeholder="changelog.yourdomain.com"
-                disabled={loading || !subscription?.isActive}
-                className={!subscription?.isActive ? "opacity-50" : ""}
+                disabled={loading}
               />
-              {!subscription?.isActive && (
-                <div className="text-[0.6875rem] leading-relaxed opacity-75">
-                  Requires active subscription.{" "}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100");
-                    }}
-                    className="underline underline-offset-4"
-                  >
-                    Upgrade
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100");
+                }}
+                className="flex h-9 items-center justify-between rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100"
+              >
+                <span className="opacity-50">Upgrade to use custom domain</span>
+                <span>$15/mo →</span>
+              </button>
+            )}
+          </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version trigger</label>
+            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+              Version trigger
+              <Hint text="Trigger on every bump, or major versions only (1.0 → 2.0)" />
+            </label>
             <RadioGroup
               items={[
                 { value: "any", label: "Every version" },
@@ -263,7 +237,10 @@ export function SettingsModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Publish mode</label>
+            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+              Publish mode
+              <Hint text="Publish immediately or save as draft to review first" />
+            </label>
             <RadioGroup
               items={[
                 { value: "auto", label: "Auto-publish" },
@@ -279,7 +256,10 @@ export function SettingsModal({
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Version source</label>
+            <label className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">
+              Version source
+              <Hint text="Reads package.json, Cargo.toml, etc. or specify in uncommit.json" />
+            </label>
             <RadioGroup
               items={[
                 { value: "auto", label: "Auto-detect" },
@@ -306,8 +286,12 @@ export function SettingsModal({
             </div>
           )}
 
-          <Button onClick={handleSave} disabled={!selectedRepo || loading} fullWidth>
-            {loading ? "Saving…" : "Save"}
+          <Button
+            onClick={handleSave}
+            disabled={!selectedRepo || loading}
+            fullWidth
+          >
+            {loading ? "Saving…" : mode === "add" ? "Add repository" : "Save"}
           </Button>
 
           {setupSaved && installUrl && (
@@ -319,26 +303,7 @@ export function SettingsModal({
             </div>
           )}
 
-          <div className="mt-2 border-t border-[var(--border)] pt-4">
-            <div className="flex items-center justify-between text-[0.6875rem]">
-              <span className="opacity-50">
-                {subscription?.isActive
-                  ? `${subscription.tier === "pro" ? "Pro" : subscription.tier === "supporter" ? "Supporter" : "Active"} plan`
-                  : "Free plan"}
-              </span>
-              {!subscription?.isActive && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100");
-                  }}
-                  className="underline underline-offset-4 opacity-70 hover:opacity-100"
-                >
-                  Upgrade
-                </button>
-              )}
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
@@ -351,6 +316,19 @@ function Checkmark() {
       <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
         <path d="M9.1603 1.12218C9.50684 1.34873 9.60427 1.81354 9.37792 2.16038L5.13603 8.66012C5.01614 8.8438 4.82192 8.96576 4.60451 8.99384C4.3871 9.02194 4.1683 8.95335 4.00574 8.80615L1.24664 6.30769C0.939709 6.02975 0.916013 5.55541 1.19372 5.24822C1.47142 4.94102 1.94536 4.91731 2.2523 5.19524L4.36085 7.10461L8.12299 1.33999C8.34934 0.993152 8.81376 0.895638 9.1603 1.12218Z" />
       </svg>
+    </span>
+  );
+}
+
+function Hint({ text }: { text: string }) {
+  return (
+    <span className="group relative cursor-help">
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="opacity-30 transition-opacity group-hover:opacity-60">
+        <path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0Zm1 12H7V7h2Zm0-6H7V4h2Z" />
+      </svg>
+      <span className="pointer-events-none absolute bottom-full left-0 z-10 mb-1 w-44 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-[0.625rem] font-normal normal-case leading-relaxed tracking-normal opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+        {text}
+      </span>
     </span>
   );
 }
