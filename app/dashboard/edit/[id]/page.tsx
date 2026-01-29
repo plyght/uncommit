@@ -111,17 +111,17 @@ export default function EditChangelogPage() {
   return (
     <main className="flex min-h-screen items-start justify-center px-6 py-12">
       <div className="w-full max-w-[900px] text-left">
-        <header className="mb-8 flex items-center gap-6">
+        <header className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:gap-6">
           <Link href="/dashboard" className="text-[0.75rem] opacity-50 transition-opacity hover:opacity-100">
             ← Back
           </Link>
           <div>
-            <h1 className="text-[1.5rem] font-semibold tracking-[-0.02em]">Edit post</h1>
-            <p className="text-[0.8125rem] opacity-50">{data.repo.repoOwner}/{data.repo.repoName}</p>
+            <h1 className="text-[1.25rem] font-semibold tracking-[-0.02em] sm:text-[1.5rem]">Edit post</h1>
+            <p className="text-[0.75rem] opacity-50 sm:text-[0.8125rem]">{data.repo.repoOwner}/{data.repo.repoName}</p>
           </div>
         </header>
 
-        <div className="flex flex-col gap-6 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-6">
+        <div className="flex flex-col gap-5 border border-[var(--border)] bg-[var(--card-bg)] p-4 sm:gap-6 sm:p-6">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <label className="text-[0.6875rem] font-medium uppercase tracking-[0.05em] opacity-50">Title</label>
@@ -197,7 +197,7 @@ export default function EditChangelogPage() {
               </Button>
             )}
             <Button
-              className="border border-[var(--border)] bg-transparent text-[var(--fg)] hover:bg-[var(--gray-100)]"
+              className="border border-[var(--border)] !bg-transparent text-[var(--fg)] hover:!bg-[var(--gray-100)]"
               onClick={async () => {
                 if (!canCopyLink) return;
                 try {

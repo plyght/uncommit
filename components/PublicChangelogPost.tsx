@@ -67,7 +67,7 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
           <Link href={backHref} className="text-[0.75rem] uppercase tracking-[0.35em] text-[var(--public-muted)]">
             ← Back to release notes
           </Link>
-          <h1 className="mt-6 text-[2.5rem] font-semibold leading-[1.1]">{data.changelog.title}</h1>
+          <h1 className="mt-4 text-[1.5rem] font-semibold leading-[1.15] sm:mt-6 sm:text-[2.5rem] sm:leading-[1.1]">{data.changelog.title}</h1>
           <p className="mt-3 text-[0.85rem] text-[var(--public-muted)]">{repoLabel}</p>
           <div className="mt-6 text-[0.75rem] uppercase tracking-[0.3em] text-[var(--public-muted)]">
             {new Date(data.changelog.publishedAt ?? data.changelog.createdAt).toLocaleDateString()}
@@ -75,7 +75,7 @@ export function PublicChangelogPost({ slug, customDomain, postSlug }: Props) {
         </aside>
         <section className="px-6 py-12 lg:px-12 lg:py-16">
           <div className="w-full max-w-[900px] text-left">
-            <article className="border border-[var(--border)] bg-[var(--card-bg)] p-6">
+            <article className="border border-[var(--border)] bg-[var(--card-bg)] p-5 sm:p-6">
               <div className="font-sans text-[1rem] leading-[1.7] text-[var(--fg)]">
                 <MarkdownPreview markdown={data.changelog.markdown} />
               </div>

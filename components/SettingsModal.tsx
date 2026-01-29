@@ -151,7 +151,7 @@ export function SettingsModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative max-h-[90vh] w-full max-w-[480px] overflow-y-auto rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg)] p-6 shadow-lg">
+      <div className="relative max-h-[100dvh] w-full max-w-[480px] overflow-y-auto border border-[var(--border)] bg-[var(--bg)] p-5 shadow-lg sm:max-h-[90vh] sm:p-6">
         <button
           type="button"
           onClick={onClose}
@@ -204,13 +204,16 @@ export function SettingsModal({
                 disabled={loading}
               />
             ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100");
-                }}
-                className="flex h-9 items-center justify-between rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100"
-              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    const w = 480, h = 720;
+                    const left = (screen.width - w) / 2;
+                    const top = (screen.height - h) / 2;
+                    paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
+                  }}
+                  className="flex h-10 items-center justify-between border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100 sm:h-9"
+                >
                 <span className="opacity-50">Upgrade to use custom domain</span>
                 <span>$15/mo →</span>
               </button>
@@ -276,7 +279,7 @@ export function SettingsModal({
 
           {message && (
             <div
-              className={`rounded-[var(--radius)] border px-3 py-2 text-[0.75rem] ${
+              className={`border px-3 py-2 text-[0.75rem] ${
                 message.type === "success"
                   ? "border-[var(--success)] text-[var(--success)]"
                   : "border-[var(--error)] text-[var(--error)]"
@@ -323,10 +326,10 @@ function Checkmark() {
 function Hint({ text }: { text: string }) {
   return (
     <span className="group relative cursor-help">
-      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="opacity-30 transition-opacity group-hover:opacity-60">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" className="opacity-30 transition-opacity group-hover:opacity-60">
         <path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0Zm1 12H7V7h2Zm0-6H7V4h2Z" />
       </svg>
-      <span className="pointer-events-none absolute bottom-full left-0 z-10 mb-1 w-44 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg)] px-2 py-1.5 text-[0.625rem] font-normal normal-case leading-relaxed tracking-normal opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+      <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 w-48 -translate-x-1/2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--bg)] px-2.5 py-2 text-[0.625rem] font-normal normal-case leading-relaxed tracking-normal opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
         {text}
       </span>
     </span>

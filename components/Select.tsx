@@ -32,7 +32,7 @@ export function Select({ items, value, onValueChange, placeholder = "Select...",
       onValueChange={handleValueChange(onValueChange)}
       disabled={disabled}
     >
-      <BaseSelect.Trigger className="flex h-[2.25rem] w-full cursor-pointer select-none items-center justify-between gap-[0.5rem] rounded-[var(--radius)] border border-[var(--border)] bg-[var(--input-bg)] px-[0.625rem] text-[0.75rem] text-[var(--fg)] outline-none transition-[border-color] duration-[0.15s] hover:border-[var(--fg)] focus-visible:border-[var(--accent)] data-[disabled]:cursor-not-allowed data-[popup-open]:border-[var(--fg)] data-[disabled]:opacity-40 data-[disabled]:hover:border-[var(--border)]">
+      <BaseSelect.Trigger className="flex h-10 w-full cursor-pointer select-none items-center justify-between gap-2 border border-[var(--border)] bg-[var(--input-bg)] px-3 text-[0.75rem] text-[var(--fg)] outline-none transition-[border-color] duration-150 hover:border-[var(--fg)] focus-visible:border-[var(--accent)] data-[disabled]:cursor-not-allowed data-[popup-open]:border-[var(--fg)] data-[disabled]:opacity-40 data-[disabled]:hover:border-[var(--border)] sm:h-9">
         <BaseSelect.Value className="min-w-0 flex-1 truncate text-left data-[placeholder]:opacity-50" placeholder={placeholder} />
         <BaseSelect.Icon className="flex shrink-0 opacity-50">
           <ChevronIcon />
@@ -40,7 +40,7 @@ export function Select({ items, value, onValueChange, placeholder = "Select...",
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
         <BaseSelect.Positioner className="z-50 outline-none" sideOffset={8}>
-          <BaseSelect.Popup className="min-w-[var(--anchor-width)] w-max max-w-[90vw] max-h-[300px] overflow-y-auto origin-[var(--transform-origin)] rounded-[var(--radius)] border border-[var(--border)] bg-[var(--input-bg)] text-[var(--fg)] transition-[transform,opacity] duration-[0.15s] data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+          <BaseSelect.Popup className="min-w-[var(--anchor-width)] w-max max-w-[90vw] max-h-[300px] overflow-y-auto origin-[var(--transform-origin)] border border-[var(--border)] bg-[var(--input-bg)] text-[var(--fg)] shadow-md transition-[transform,opacity] duration-150 data-[ending-style]:scale-95 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
             <BaseSelect.List>
               {items.map((item) => (
                 <BaseSelect.Item

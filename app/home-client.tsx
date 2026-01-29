@@ -140,7 +140,7 @@ function DashboardPage() {
                       setSettingsMode("edit");
                       setSettingsOpen(true);
                     }}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] text-[var(--fg)] opacity-60 transition-opacity hover:opacity-100"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] text-[var(--fg)] opacity-60 transition-opacity hover:opacity-100 sm:h-9 sm:w-9"
                     aria-label="Settings"
                   >
                     <Settings size={16} />
@@ -167,24 +167,27 @@ function DashboardPage() {
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-3 text-[0.75rem]">
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                className="opacity-50 transition-opacity duration-150 hover:opacity-100"
-              >
-                ← Log out
-              </button>
-            </div>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 pt-4 text-[0.75rem] sm:flex-row sm:items-center sm:justify-between sm:pt-3">
+            <button
+              type="button"
+              onClick={() => void signOut()}
+              className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100"
+            >
+              ← Log out
+            </button>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               {subscription?.isActive ? (
                 <span className="opacity-30">Pro</span>
               ) : (
                 <button
                   type="button"
-                  onClick={() => window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", "width=480,height=720,left=200,top=100")}
-                  className="opacity-50 transition-opacity duration-150 hover:opacity-100"
+                  onClick={() => {
+                    const w = 480, h = 720;
+                    const left = (screen.width - w) / 2;
+                    const top = (screen.height - h) / 2;
+                    window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
+                  }}
+                  className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100"
                 >
                   Upgrade →
                 </button>
@@ -197,12 +200,12 @@ function DashboardPage() {
                     setSettingsMode("add");
                     setSettingsOpen(true);
                   }}
-                  className="opacity-50 transition-opacity duration-150 hover:opacity-100"
+                  className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100"
                 >
                   Add repo →
                 </button>
               )}
-              <Link href="/about" className="opacity-50 transition-opacity duration-150 hover:opacity-100">
+              <Link href="/about" className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100">
                 About →
               </Link>
             </div>
@@ -250,10 +253,10 @@ function ChangelogList({
     return (
       <div className="flex flex-col gap-3">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between gap-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3"
-          >
+        <div
+          key={i}
+          className="flex flex-col gap-3 border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+        >
             <div className="flex flex-col gap-1">
               <Skeleton width={180} height={16} />
               <Skeleton width={100} height={12} />
@@ -270,7 +273,7 @@ function ChangelogList({
 
   if (changelogs.length === 0) {
     return (
-      <div className="rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] p-6">
+      <div className="border border-[var(--border)] bg-[var(--card-bg)] p-6">
         <p className="text-[0.8125rem] opacity-50">
           No posts yet. They will appear here when version bumps are detected.
         </p>
@@ -283,7 +286,7 @@ function ChangelogList({
       {changelogs.map((post) => (
         <div
           key={post._id}
-          className="flex items-center justify-between gap-4 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3"
+          className="flex flex-col gap-3 border border-[var(--border)] bg-[var(--card-bg)] px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
         >
           <div className="flex flex-col gap-1 overflow-hidden">
             <div className="truncate text-[0.8125rem]">{post.title}</div>
@@ -319,7 +322,7 @@ function ChangelogList({
             <button
               type="button"
               onClick={() => void remove({ postId: post._id })}
-              className="text-[0.6875rem] opacity-50 hover:opacity-100"
+              className="opacity-50 transition-opacity hover:opacity-100"
               aria-label="Delete"
             >
               <Trash2 size={14} />

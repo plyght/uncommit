@@ -65,12 +65,12 @@ export function PublicChangelogList({ slug, customDomain }: Props) {
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,24rem)_1fr]">
         <aside className="relative border-b border-[var(--border)] bg-[var(--public-panel-bg)] px-6 py-12 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r lg:px-10 lg:py-16">
           <div className="text-[0.75rem] uppercase tracking-[0.35em] text-[var(--public-muted)]">Release notes</div>
-          <h1 className="mt-6 text-[2.5rem] font-semibold leading-[1.1]">{data.repo.repoName}</h1>
+          <h1 className="mt-4 text-[1.75rem] font-semibold leading-[1.1] sm:mt-6 sm:text-[2.5rem]">{data.repo.repoName}</h1>
           <p className="mt-3 text-[0.85rem] text-[var(--public-muted)]">{repoLabel}</p>
           <p className="mt-6 text-[0.95rem] leading-[1.7] text-[var(--public-muted)]">
             Public updates and product highlights. Changelogs stay private inside your dashboard.
           </p>
-          <div className="mt-8 border border-[var(--public-panel-border)] bg-[var(--card-bg)] px-4 py-3">
+          <div className="mt-6 border border-[var(--public-panel-border)] bg-[var(--card-bg)] px-4 py-3 sm:mt-8">
             <div className="text-[0.7rem] uppercase tracking-[0.35em] text-[var(--public-muted)]">Subscribe</div>
             <div className="mt-3 flex flex-col gap-3 text-[0.85rem] text-[var(--public-muted)]">
               <span>Get notified when new release notes ship.</span>
@@ -85,18 +85,18 @@ export function PublicChangelogList({ slug, customDomain }: Props) {
           <div className="w-full max-w-[900px] text-left">
             <div className="flex flex-col gap-6">
               {releaseNotes.length === 0 ? (
-                <div className="border border-[var(--border)] bg-[var(--card-bg)] p-6">
+                <div className="border border-[var(--border)] bg-[var(--card-bg)] p-5 sm:p-6">
                   <p className="text-[0.85rem] text-[var(--public-muted)]">No release notes yet.</p>
                 </div>
               ) : (
                 releaseNotes.map((post) => (
-                  <article key={post._id} className="border border-[var(--border)] bg-[var(--card-bg)] p-6">
+                  <article key={post._id} className="border border-[var(--border)] bg-[var(--card-bg)] p-5 sm:p-6">
                     <div className="flex flex-wrap items-center gap-3 text-[0.75rem] uppercase tracking-[0.3em] text-[var(--public-muted)]">
                       <span>{new Date(post.publishedAt ?? post.createdAt).toLocaleDateString()}</span>
                       <span className="h-[1px] w-10 bg-[var(--border)]" />
                       <span>{data.repo.repoName}</span>
                     </div>
-                    <h2 className="mt-4 text-[1.5rem] font-semibold leading-[1.3]">
+                    <h2 className="mt-3 text-[1.25rem] font-semibold leading-[1.3] sm:mt-4 sm:text-[1.5rem]">
                       <Link className="transition-colors hover:text-[var(--accent)]" href={slug ? `/${slug}/${post.slug}` : `/${post.slug}`}>
                         {post.title}
                       </Link>

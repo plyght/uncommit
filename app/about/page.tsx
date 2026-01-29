@@ -54,13 +54,13 @@ export default function About() {
             </div>
           </section>
 
-          <div className="flex items-center justify-between pt-3">
-            <Link href="/" className="text-[0.75rem] opacity-50 transition-opacity duration-150 hover:opacity-100">&larr; Back</Link>
+          <div className="flex items-center justify-between pt-4">
+            <Link href="/" className="py-2 text-[0.75rem] opacity-50 transition-opacity duration-150 hover:opacity-100">&larr; Back</Link>
             <a 
               href="https://github.com/plyght/uncommit" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-[0.75rem] opacity-50 transition-opacity duration-150 hover:opacity-100"
+              className="py-2 text-[0.75rem] opacity-50 transition-opacity duration-150 hover:opacity-100"
             >
               Source &rarr;
             </a>
