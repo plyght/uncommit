@@ -85,3 +85,56 @@ export const devSetSubscription = internalMutation({
     });
   },
 });
+
+export const grantUserAccess = internalMutation({
+  args: {
+    userId: v.optional(v.id("users")),
+    email: v.optional(v.string()),
+    tier: v.union(
+      v.literal("free"),
+      v.literal("supporter"),
+      v.literal("pro"),
+      v.literal("premium")
+    ),
+    daysUntilExpiry: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    if (!args.userId && !args.email) {
+      throw new Error("Must provide either userId or email");
+    }
+
+    let userId = args.userId;
+    if (!userId && args.email) {
+      const user = await ctx.db
+        .query("users")
+        .withIndex("email", (q) => q.eq("email", args.email))
+        .first();
+      if (!user) {
+        throw new Error(`User with email ${args.email} not found`);
+      }
+      userId = user._id;
+    }
+
+    if (!userId) {
+      throw new Error("Could not resolve user");
+    }
+
+    const status = args.tier === "free" ? "inactive" : "active";
+    const daysUntilExpiry = args.daysUntilExpiry ?? 365;
+    const expiresAt = Date.now() + daysUntilExpiry * 24 * 60 * 60 * 1000;
+
+    await ctx.db.patch(userId, {
+      subscriptionStatus: status,
+      subscriptionTier: args.tier,
+      subscriptionExpiresAt: expiresAt,
+    });
+
+    return {
+      success: true,
+      userId,
+      tier: args.tier,
+      status,
+      expiresAt,
+    };
+  },
+});

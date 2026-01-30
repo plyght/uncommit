@@ -1,4 +1,4 @@
-import { mutation, query, internalMutation } from "./_generated/server";
+import { mutation, query, internalMutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
@@ -155,5 +155,23 @@ export const bindInstallationToRepo = mutation({
       updatedAt: Date.now(),
     });
     return repo._id;
+  },
+});
+
+export const getRepoByName = internalQuery({
+  args: {
+    repoOwner: v.string(),
+    repoName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("repos")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("repoOwner"), args.repoOwner),
+          q.eq(q.field("repoName"), args.repoName)
+        )
+      )
+      .first();
   },
 });

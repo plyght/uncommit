@@ -15,6 +15,7 @@ import type * as github from "../github.js";
 import type * as http from "../http.js";
 import type * as install from "../install.js";
 import type * as kofi from "../kofi.js";
+import type * as pricing from "../pricing.js";
 import type * as repos from "../repos.js";
 import type * as users from "../users.js";
 
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   install: typeof install;
   kofi: typeof kofi;
+  pricing: typeof pricing;
   repos: typeof repos;
   users: typeof users;
 }>;

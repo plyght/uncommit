@@ -108,6 +108,60 @@ bun run convex:dev
 
 Requires Bun runtime. Key dependencies: Next.js 14, Convex, @convex-dev/auth, @base-ui/react, tweetnacl.
 
+## Pricing & Configuration
+
+Uncommit offers two modes:
+
+### 1. Self-Hosted (Free - BYOK)
+- Bring your own OpenAI or Anthropic API key
+- Use the workflows in `.github/workflows/aia.yml` (Anthropic) or `aio.yml` (OpenAI)
+- No rate limits beyond your own API quota
+- Full control and transparency
+
+### 2. Managed Hosting (Paid)
+- We provide the API keys
+- Rate-limited by tier (Ko-fi subscription tiers)
+- Includes custom domain support
+- Uses `.github/workflows/managed.yml`
+
+**Pricing Tiers** (Ko-fi):
+- **Basic** ($15/mo): 5 releases/month
+- **Pro** ($30/mo): 15 releases/month
+- **Business** ($60/mo): 50 releases/month
+
+All managed plans include custom domain support. Contact for enterprise/higher limits.
+
+## Admin Operations
+
+As an open source project, Uncommit includes admin functions for granting user access. These are **internal mutations** that can only be called via the Convex dashboard or CLI.
+
+### Granting User Access
+
+```bash
+# Via Convex CLI
+bunx convex run users:grantUserAccess --email "user@example.com" --tier "pro" --daysUntilExpiry 365
+```
+
+Available tiers: `free`, `supporter`, `pro`, `premium`
+
+**Security Note**: Since this is open source, ensure your Convex deployment credentials are kept private. Only repository owners with Convex admin access can call internal mutations. Never expose these functions as public APIs.
+
+### Self-Hosted Workflow Setup
+
+For self-hosted (BYOK) setup:
+1. Copy `.github/workflows/aia.yml` or `aio.yml` to your repo
+2. Add `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` to repository secrets
+3. Bump version and push to main branch
+
+### Managed API Setup
+
+For managed hosting:
+1. Subscribe via Ko-fi with desired tier
+2. Link your Ko-fi email in dashboard
+3. Copy `.github/workflows/managed.yml` to your repo
+4. Add `UNCOMMIT_WEBHOOK_SECRET` from your dashboard to repository secrets
+5. Optionally add `UNCOMMIT_API_URL` if self-hosting the platform
+
 ## License
 
 [Elastic License 2.0](./LICENSE) — Source available. Free to use, modify, and learn from. Cannot be offered as a competing hosted service.

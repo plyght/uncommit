@@ -42,6 +42,9 @@ export default defineSchema({
     versionSource: v.string(),
     versionStrategy: v.string(),
     publishMode: v.string(),
+    apiKeyMode: v.optional(v.string()),
+    versionsPerMonth: v.optional(v.number()),
+    monthlyPrice: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -82,4 +85,15 @@ export default defineSchema({
   })
     .index("by_email", ["email"])
     .index("by_transaction", ["kofiTransactionId"]),
+  apiUsage: defineTable({
+    userId: v.id("users"),
+    repoOwner: v.string(),
+    repoName: v.string(),
+    provider: v.string(),
+    tokensUsed: v.number(),
+    timestamp: v.number(),
+    version: v.string(),
+  })
+    .index("by_user_and_month", ["userId", "timestamp"])
+    .index("by_repo", ["repoOwner", "repoName"]),
 });
