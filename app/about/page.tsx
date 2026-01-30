@@ -48,10 +48,16 @@ export default function About() {
 
           <section className="flex flex-col gap-1">
             <h2 className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Pricing</h2>
-            <div className="text-[0.75rem] leading-[1.6] opacity-80 sm:text-[0.8125rem] sm:leading-[1.7]">
-              <span><strong>Free</strong> — yourrepo.uncommit.sh</span>
-              <span className="mx-2 opacity-30">·</span>
-              <span><strong>$15/mo</strong> — custom domain</span>
+            <div className="flex flex-col gap-2 text-[0.75rem] leading-[1.6] opacity-80 sm:text-[0.8125rem] sm:leading-[1.7]">
+              <div>
+                <strong>Self-Hosted (Free)</strong> — Bring your own API key
+              </div>
+              <div>
+                <strong>Managed</strong> — We provide API keys + custom domains
+                <div className="ml-3 mt-1 text-[0.6875rem] opacity-70 sm:text-[0.75rem]">
+                  Basic $15 · Pro $30 · Business $60
+                </div>
+              </div>
             </div>
           </section>
 

@@ -68,13 +68,14 @@ export const saveRepoSettings = mutation({
     repoName: v.string(),
     planType: v.string(),
     customDomain: v.optional(v.string()),
+    apiKeyMode: v.optional(v.string()),
     versionSource: v.string(),
     versionStrategy: v.string(),
     publishMode: v.string(),
   },
   handler: async (
     ctx,
-    { githubRepoId, repoOwner, repoName, planType, customDomain, versionSource, versionStrategy, publishMode }
+    { githubRepoId, repoOwner, repoName, planType, customDomain, apiKeyMode, versionSource, versionStrategy, publishMode }
   ) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
@@ -94,6 +95,7 @@ export const saveRepoSettings = mutation({
         planType,
         customDomain: normalizedDomain,
         domainStatus: normalizedDomain ? "pending" : undefined,
+        apiKeyMode,
         versionSource,
         versionStrategy,
         publishMode,
@@ -116,6 +118,7 @@ export const saveRepoSettings = mutation({
       slug,
       customDomain: normalizedDomain,
       domainStatus: normalizedDomain ? "pending" : undefined,
+      apiKeyMode,
       versionSource,
       versionStrategy,
       publishMode,

@@ -8,6 +8,8 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { RadioGroup } from "@/components/RadioGroup";
+import { PricingSlider } from "@/components/PricingSlider";
+import { PRICING_TIERS } from "@/lib/pricing";
 
 type SettingsModalProps = {
   open: boolean;
@@ -33,6 +35,8 @@ export function SettingsModal({
 
   const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string; id?: number }>>([]);
   const [customDomain, setCustomDomain] = useState("");
+  const [apiKeyMode, setApiKeyMode] = useState<"byok" | "managed">("byok");
+  const [selectedVersions, setSelectedVersions] = useState(5);
   const [versionStrategy, setVersionStrategy] = useState<"any" | "major-only">("any");
   const [publishMode, setPublishMode] = useState<"auto" | "draft">("draft");
   const [versionSource, setVersionSource] = useState<"auto" | "uncommit">("auto");
@@ -85,12 +89,14 @@ export function SettingsModal({
 
     if (selected) {
       setCustomDomain(selected.customDomain ?? "");
+      setApiKeyMode((selected.apiKeyMode as "byok" | "managed") ?? "byok");
       setVersionStrategy((selected.versionStrategy as "any" | "major-only") ?? "any");
       setPublishMode((selected.publishMode as "auto" | "draft") ?? "draft");
       setVersionSource((selected.versionSource as "auto" | "uncommit") ?? "auto");
       setSetupSaved(true);
     } else {
       setCustomDomain("");
+      setApiKeyMode("byok");
       setVersionStrategy("any");
       setPublishMode("draft");
       setVersionSource("auto");
@@ -126,6 +132,7 @@ export function SettingsModal({
         repoName: name,
         planType: hasPaidFeatures ? "paid" : "free",
         customDomain: subscription?.isActive ? customDomain : undefined,
+        apiKeyMode,
         versionStrategy,
         versionSource,
         publishMode,
@@ -221,6 +228,79 @@ export function SettingsModal({
           ) : (
             <>
               <div className="text-[0.75rem] opacity-50 sm:text-[0.8125rem]">{selectedRepo}</div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
+                  API Key Mode
+                  <Hint text="BYOK: Bring your own OpenAI/Anthropic key (free, unlimited). Managed: We provide keys with rate limits by tier." />
+                </label>
+                <RadioGroup
+                  items={[
+                    { value: "byok", label: "BYOK (Self-hosted)" },
+                    { value: "managed", label: "Managed ($15-60/mo)" },
+                  ]}
+                  value={apiKeyMode}
+                  onValueChange={(val) => {
+                    setApiKeyMode(val as "byok" | "managed");
+                    setSetupSaved(false);
+                  }}
+                  disabled={loading}
+                />
+                {apiKeyMode === "byok" && (
+                  <div className="mt-1 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 text-[0.6875rem] leading-relaxed opacity-70">
+                    <div className="mb-1.5 font-medium opacity-90">Use workflow:</div>
+                    <code className="rounded bg-[var(--gray-100)] px-1.5 py-0.5 text-[0.625rem]">.github/workflows/aia.yml</code> (Anthropic)
+                    <br />
+                    <code className="rounded bg-[var(--gray-100)] px-1.5 py-0.5 text-[0.625rem]">.github/workflows/aio.yml</code> (OpenAI)
+                    <div className="mt-2 text-[0.625rem] opacity-60">
+                      Add your <code className="rounded bg-[var(--gray-100)] px-1 py-0.5">ANTHROPIC_API_KEY</code> or <code className="rounded bg-[var(--gray-100)] px-1 py-0.5">OPENAI_API_KEY</code> to repository secrets.
+                    </div>
+                  </div>
+                )}
+                {apiKeyMode === "managed" && (
+                  <div className="mt-1 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 text-[0.6875rem] leading-relaxed">
+                    {subscription?.isActive ? (
+                      <>
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="font-medium text-[var(--accent)]">✓ Active</span>
+                          <span className="text-[0.625rem] opacity-60">
+                            {subscription.tier === "basic" && "5 releases/mo"}
+                            {subscription.tier === "pro" && "15 releases/mo"}
+                            {subscription.tier === "business" && "50 releases/mo"}
+                          </span>
+                        </div>
+                        <div className="mb-1.5 text-[0.625rem] opacity-90">Use workflow:</div>
+                        <code className="rounded bg-[var(--gray-100)] px-1.5 py-0.5 text-[0.625rem]">.github/workflows/managed.yml</code>
+                        <div className="mt-2 text-[0.625rem] opacity-60">
+                          Add <code className="rounded bg-[var(--gray-100)] px-1 py-0.5">UNCOMMIT_WEBHOOK_SECRET</code> from your Ko-fi settings.
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="mb-3 font-medium opacity-90">Choose your tier:</div>
+                        <PricingSlider
+                          value={selectedVersions}
+                          onValueChange={setSelectedVersions}
+                          disabled={loading}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const selectedTier = PRICING_TIERS.find((t) => t.versions === selectedVersions);
+                            const w = 480, h = 720;
+                            const left = (screen.width - w) / 2;
+                            const top = (screen.height - h) / 2;
+                            paymentPopup.current = window.open("https://ko-fi.com/uncommit", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
+                          }}
+                          className="mt-4 flex h-8 w-full items-center justify-center border border-[var(--border)] bg-[var(--bg)] text-[0.6875rem] font-medium transition-opacity hover:opacity-70"
+                        >
+                          Subscribe on Ko-fi →
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">Custom domain</label>
