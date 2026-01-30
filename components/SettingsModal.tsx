@@ -292,7 +292,7 @@ export function SettingsModal({
               <div className="flex flex-col gap-1.5">
                 <label className="flex items-center gap-1.5 text-[0.625rem] font-medium uppercase tracking-[0.05em] opacity-50 sm:text-[0.6875rem]">
                   Version source
-                  <Hint text="Reads package.json, Cargo.toml, etc. or specify in uncommit.json" />
+                  <Hint text="Reads package.json, Cargo.toml, pyproject.toml, Version.swift, etc. or specify in uncommit.json" />
                 </label>
                 <RadioGroup
                   items={[

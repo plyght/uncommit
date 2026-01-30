@@ -14,6 +14,8 @@ on:
       - 'pyproject.toml'
       - 'version.txt'
       - 'VERSION'
+      - 'Version.swift'
+      - 'version.swift'
 
 permissions:
   contents: write
@@ -35,25 +37,67 @@ jobs:
       - name: Detect version change
         id: check
         run: |
+          get_version_from_file() {
+            local file=$1
+            local pkg_type=$2
+            
+            case "$file" in
+              "package.json")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  jq -r '.version' "$file"
+                fi
+                ;;
+              "Cargo.toml")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep '^version' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "pyproject.toml")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep '^version' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "Version.swift"|"version.swift")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep -E '(let|var|static let|public static let)\\s+version\\s*=\\s*"' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "version.txt")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  cat "$file" | tr -d '[:space:]'
+                fi
+                ;;
+              "VERSION")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  cat "$file" | tr -d '[:space:]'
+                fi
+                ;;
+            esac
+          }
+          
           get_version() {
-            if [ -f "package.json" ]; then
-              echo "pkg_type=node" >> $GITHUB_OUTPUT
-              jq -r '.version' package.json
-            elif [ -f "Cargo.toml" ]; then
-              echo "pkg_type=rust" >> $GITHUB_OUTPUT
-              grep '^version' Cargo.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
-            elif [ -f "pyproject.toml" ]; then
-              echo "pkg_type=python" >> $GITHUB_OUTPUT
-              grep '^version' pyproject.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
-            elif [ -f "version.txt" ]; then
-              echo "pkg_type=txt" >> $GITHUB_OUTPUT
-              cat version.txt | tr -d '[:space:]'
-            elif [ -f "VERSION" ]; then
-              echo "pkg_type=txt" >> $GITHUB_OUTPUT
-              cat VERSION | tr -d '[:space:]'
-            else
-              echo ""
-            fi
+            local version=""
+            version=$(get_version_from_file "package.json" "node")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "Cargo.toml" "rust")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "pyproject.toml" "python")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "Version.swift" "swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "version.swift" "swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "version.txt" "txt")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "VERSION" "txt")
+            [ -n "$version" ] && echo "$version" && return
+            echo ""
           }
           
           CURRENT=$(get_version)
@@ -68,23 +112,58 @@ jobs:
           git show HEAD^:package.json 2>/dev/null > /tmp/old_pkg.json || true
           git show HEAD^:Cargo.toml 2>/dev/null > /tmp/old_cargo.toml || true
           git show HEAD^:pyproject.toml 2>/dev/null > /tmp/old_pyproject.toml || true
+          git show HEAD^:Version.swift 2>/dev/null > /tmp/old_Version.swift || true
+          git show HEAD^:version.swift 2>/dev/null > /tmp/old_version.swift || true
           git show HEAD^:version.txt 2>/dev/null > /tmp/old_version.txt || true
           git show HEAD^:VERSION 2>/dev/null > /tmp/old_VERSION || true
           
-          get_old_version() {
-            if [ -f "package.json" ] && [ -s /tmp/old_pkg.json ]; then
-              jq -r '.version' /tmp/old_pkg.json 2>/dev/null || echo "0.0.0"
-            elif [ -f "Cargo.toml" ] && [ -s /tmp/old_cargo.toml ]; then
-              grep '^version' /tmp/old_cargo.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/' || echo "0.0.0"
-            elif [ -f "pyproject.toml" ] && [ -s /tmp/old_pyproject.toml ]; then
-              grep '^version' /tmp/old_pyproject.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/' || echo "0.0.0"
-            elif [ -f "version.txt" ] && [ -s /tmp/old_version.txt ]; then
-              cat /tmp/old_version.txt | tr -d '[:space:]'
-            elif [ -f "VERSION" ] && [ -s /tmp/old_VERSION ]; then
-              cat /tmp/old_VERSION | tr -d '[:space:]'
-            else
-              echo "0.0.0"
+          get_old_version_from_file() {
+            local file=$1
+            local old_file=$2
+            
+            if [ ! -f "$file" ] || [ ! -s "$old_file" ]; then
+              return
             fi
+            
+            case "$file" in
+              "package.json")
+                jq -r '.version' "$old_file" 2>/dev/null
+                ;;
+              "Cargo.toml")
+                grep '^version' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "pyproject.toml")
+                grep '^version' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "Version.swift"|"version.swift")
+                grep -E '(let|var|static let|public static let)\\s+version\\s*=\\s*"' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "version.txt")
+                cat "$old_file" | tr -d '[:space:]'
+                ;;
+              "VERSION")
+                cat "$old_file" | tr -d '[:space:]'
+                ;;
+            esac
+          }
+          
+          get_old_version() {
+            local version=""
+            version=$(get_old_version_from_file "package.json" "/tmp/old_pkg.json")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "Cargo.toml" "/tmp/old_cargo.toml")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "pyproject.toml" "/tmp/old_pyproject.toml")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "Version.swift" "/tmp/old_Version.swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "version.swift" "/tmp/old_version.swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "version.txt" "/tmp/old_version.txt")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "VERSION" "/tmp/old_VERSION")
+            [ -n "$version" ] && echo "$version" && return
+            echo "0.0.0"
           }
           
           PREVIOUS=$(get_old_version)
@@ -125,10 +204,10 @@ jobs:
           PREV_TAG="\${{ needs.check-version.outputs.prev_tag }}"
           
           if [ -n "$PREV_TAG" ]; then
-            DIFF=$(git diff "$PREV_TAG"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 2>/dev/null | head -c 80000 || echo "")
+            DIFF=$(git diff "$PREV_TAG"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 'Version.swift' 'version.swift' 2>/dev/null | head -c 80000 || echo "")
           else
             FIRST=$(git rev-list --max-parents=0 HEAD)
-            DIFF=$(git diff "$FIRST"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 2>/dev/null | head -c 80000 || echo "")
+            DIFF=$(git diff "$FIRST"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 'Version.swift' 'version.swift' 2>/dev/null | head -c 80000 || echo "")
           fi
           
           if [ -z "$DIFF" ] || [ "$DIFF" = "" ]; then
@@ -193,6 +272,8 @@ on:
       - 'pyproject.toml'
       - 'version.txt'
       - 'VERSION'
+      - 'Version.swift'
+      - 'version.swift'
 
 permissions:
   contents: write
@@ -214,25 +295,67 @@ jobs:
       - name: Detect version change
         id: check
         run: |
+          get_version_from_file() {
+            local file=$1
+            local pkg_type=$2
+            
+            case "$file" in
+              "package.json")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  jq -r '.version' "$file"
+                fi
+                ;;
+              "Cargo.toml")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep '^version' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "pyproject.toml")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep '^version' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "Version.swift"|"version.swift")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  grep -E '(let|var|static let|public static let)\\s+version\\s*=\\s*"' "$file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                fi
+                ;;
+              "version.txt")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  cat "$file" | tr -d '[:space:]'
+                fi
+                ;;
+              "VERSION")
+                if [ -f "$file" ]; then
+                  echo "pkg_type=$pkg_type" >> $GITHUB_OUTPUT
+                  cat "$file" | tr -d '[:space:]'
+                fi
+                ;;
+            esac
+          }
+          
           get_version() {
-            if [ -f "package.json" ]; then
-              echo "pkg_type=node" >> $GITHUB_OUTPUT
-              jq -r '.version' package.json
-            elif [ -f "Cargo.toml" ]; then
-              echo "pkg_type=rust" >> $GITHUB_OUTPUT
-              grep '^version' Cargo.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
-            elif [ -f "pyproject.toml" ]; then
-              echo "pkg_type=python" >> $GITHUB_OUTPUT
-              grep '^version' pyproject.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
-            elif [ -f "version.txt" ]; then
-              echo "pkg_type=txt" >> $GITHUB_OUTPUT
-              cat version.txt | tr -d '[:space:]'
-            elif [ -f "VERSION" ]; then
-              echo "pkg_type=txt" >> $GITHUB_OUTPUT
-              cat VERSION | tr -d '[:space:]'
-            else
-              echo ""
-            fi
+            local version=""
+            version=$(get_version_from_file "package.json" "node")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "Cargo.toml" "rust")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "pyproject.toml" "python")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "Version.swift" "swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "version.swift" "swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "version.txt" "txt")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_version_from_file "VERSION" "txt")
+            [ -n "$version" ] && echo "$version" && return
+            echo ""
           }
           
           CURRENT=$(get_version)
@@ -247,23 +370,58 @@ jobs:
           git show HEAD^:package.json 2>/dev/null > /tmp/old_pkg.json || true
           git show HEAD^:Cargo.toml 2>/dev/null > /tmp/old_cargo.toml || true
           git show HEAD^:pyproject.toml 2>/dev/null > /tmp/old_pyproject.toml || true
+          git show HEAD^:Version.swift 2>/dev/null > /tmp/old_Version.swift || true
+          git show HEAD^:version.swift 2>/dev/null > /tmp/old_version.swift || true
           git show HEAD^:version.txt 2>/dev/null > /tmp/old_version.txt || true
           git show HEAD^:VERSION 2>/dev/null > /tmp/old_VERSION || true
           
-          get_old_version() {
-            if [ -f "package.json" ] && [ -s /tmp/old_pkg.json ]; then
-              jq -r '.version' /tmp/old_pkg.json 2>/dev/null || echo "0.0.0"
-            elif [ -f "Cargo.toml" ] && [ -s /tmp/old_cargo.toml ]; then
-              grep '^version' /tmp/old_cargo.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/' || echo "0.0.0"
-            elif [ -f "pyproject.toml" ] && [ -s /tmp/old_pyproject.toml ]; then
-              grep '^version' /tmp/old_pyproject.toml | head -1 | sed 's/.*"\\(.*\\)".*/\\1/' || echo "0.0.0"
-            elif [ -f "version.txt" ] && [ -s /tmp/old_version.txt ]; then
-              cat /tmp/old_version.txt | tr -d '[:space:]'
-            elif [ -f "VERSION" ] && [ -s /tmp/old_VERSION ]; then
-              cat /tmp/old_VERSION | tr -d '[:space:]'
-            else
-              echo "0.0.0"
+          get_old_version_from_file() {
+            local file=$1
+            local old_file=$2
+            
+            if [ ! -f "$file" ] || [ ! -s "$old_file" ]; then
+              return
             fi
+            
+            case "$file" in
+              "package.json")
+                jq -r '.version' "$old_file" 2>/dev/null
+                ;;
+              "Cargo.toml")
+                grep '^version' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "pyproject.toml")
+                grep '^version' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "Version.swift"|"version.swift")
+                grep -E '(let|var|static let|public static let)\\s+version\\s*=\\s*"' "$old_file" | head -1 | sed 's/.*"\\(.*\\)".*/\\1/'
+                ;;
+              "version.txt")
+                cat "$old_file" | tr -d '[:space:]'
+                ;;
+              "VERSION")
+                cat "$old_file" | tr -d '[:space:]'
+                ;;
+            esac
+          }
+          
+          get_old_version() {
+            local version=""
+            version=$(get_old_version_from_file "package.json" "/tmp/old_pkg.json")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "Cargo.toml" "/tmp/old_cargo.toml")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "pyproject.toml" "/tmp/old_pyproject.toml")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "Version.swift" "/tmp/old_Version.swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "version.swift" "/tmp/old_version.swift")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "version.txt" "/tmp/old_version.txt")
+            [ -n "$version" ] && echo "$version" && return
+            version=$(get_old_version_from_file "VERSION" "/tmp/old_VERSION")
+            [ -n "$version" ] && echo "$version" && return
+            echo "0.0.0"
           }
           
           PREVIOUS=$(get_old_version)
@@ -304,10 +462,10 @@ jobs:
           PREV_TAG="\${{ needs.check-version.outputs.prev_tag }}"
           
           if [ -n "$PREV_TAG" ]; then
-            DIFF=$(git diff "$PREV_TAG"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 2>/dev/null | head -c 80000 || echo "")
+            DIFF=$(git diff "$PREV_TAG"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 'Version.swift' 'version.swift' 2>/dev/null | head -c 80000 || echo "")
           else
             FIRST=$(git rev-list --max-parents=0 HEAD)
-            DIFF=$(git diff "$FIRST"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 2>/dev/null | head -c 80000 || echo "")
+            DIFF=$(git diff "$FIRST"..HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' '*.rs' '*.py' '*.go' '*.java' '*.rb' '*.php' '*.cs' '*.swift' '*.kt' 'package.json' 'Cargo.toml' 'pyproject.toml' 'Version.swift' 'version.swift' 2>/dev/null | head -c 80000 || echo "")
           fi
           
           if [ -z "$DIFF" ] || [ "$DIFF" = "" ]; then

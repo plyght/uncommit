@@ -8,7 +8,8 @@ Uncommit eliminates the tedium of writing release notes. When you bump your vers
 
 ## Features
 
-- **Automatic Version Detection**: Supports package.json, Cargo.toml, pyproject.toml, version.txt, VERSION, and uncommit.json
+- **Automatic Version Detection**: Supports multiple languages and package managers (Node.js, Rust, Python, Swift, and generic version files)
+- **Multi-Language Repository Support**: Detects version files across different ecosystems in monorepos
 - **Intelligent Diff Analysis**: Analyzes code changes across 14+ file types to generate meaningful notes
 - **Multi-Provider Support**: Works with OpenAI or Anthropic APIs
 - **GitHub App Monitoring**: Webhook-driven detection of version bumps
@@ -79,12 +80,15 @@ The generated workflow:
 
 ## Configuration
 
-The installed workflow monitors these version files:
+The installed workflow monitors these version files (priority order):
 - `package.json` (Node.js)
 - `Cargo.toml` (Rust)
 - `pyproject.toml` (Python)
+- `Version.swift` / `version.swift` (Swift/iOS)
 - `version.txt` / `VERSION` (Generic)
-- `uncommit.json` (Uncommit)
+- `uncommit.json` (Uncommit-specific)
+
+For multi-language repositories, the first detected version file wins. Swift version files should contain declarations like `let version = "1.0.0"` or `public static let version = "1.0.0"`.
 
 AI prompts are configured to produce:
 - No emojis
