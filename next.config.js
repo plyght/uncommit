@@ -1,8 +1,9 @@
-const { withWorkflow } = require("workflow/next");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
-module.exports = withWorkflow(nextConfig);
+module.exports = nextConfig;

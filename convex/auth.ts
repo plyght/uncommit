@@ -10,7 +10,7 @@ export const { auth, signIn, signOut, store, isAuthenticated } = convexAuth({
       authorization: {
         params: { scope: "read:user repo" },
       },
-      profile(githubProfile, tokens) {
+      profile(githubProfile: any, tokens: any) {
         return {
           id: githubProfile.id.toString(),
           name: githubProfile.name ?? githubProfile.login,

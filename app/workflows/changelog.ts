@@ -21,12 +21,12 @@ type WorkflowPayload = {
   customDomain?: string;
 };
 
-export async function changelogWorkflow(payload: WorkflowPayload) {
+export async function changelogWorkflow(payload: WorkflowPayload): Promise<void> {
   "use workflow";
 
   const detection = await detectVersionStep(payload);
   if (!detection.shouldRelease || !detection.version) {
-    return { skipped: true };
+    return;
   }
 
   const comment = await postGitHubCommentStep({
@@ -53,7 +53,7 @@ export async function changelogWorkflow(payload: WorkflowPayload) {
 
   const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_BASE_URL || "";
   if (!payload.customDomain && !appBaseUrl) {
-    return { skipped: true, reason: "No app base URL or custom domain configured" };
+    return;
   }
 
   const publicLink =
@@ -71,6 +71,4 @@ export async function changelogWorkflow(payload: WorkflowPayload) {
     link: publicLink,
     publishMode: payload.publishMode,
   });
-
-  return { ok: true, link: publicLink };
 }

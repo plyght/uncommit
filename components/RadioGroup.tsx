@@ -9,15 +9,16 @@ interface RadioGroupProps {
   onValueChange: (value: string) => void;
   disabled?: boolean;
   name?: string;
+  "aria-label"?: string;
 }
 
-export function RadioGroup({ items, value, onValueChange, disabled, name }: RadioGroupProps) {
+export function RadioGroup({ items, value, onValueChange, disabled, name, "aria-label": ariaLabel }: RadioGroupProps) {
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1">
+    <div className="flex flex-wrap gap-x-4 gap-y-1" role="radiogroup" aria-label={ariaLabel}>
       {items.map((item) => (
         <label
           key={item.value}
-          className={`flex cursor-pointer items-center gap-2 py-1 text-[0.75rem] ${
+          className={`flex min-h-[44px] cursor-pointer items-center gap-2 py-1 text-[0.75rem] ${
             disabled ? "cursor-not-allowed opacity-50" : ""
           }`}
         >
@@ -34,12 +35,13 @@ export function RadioGroup({ items, value, onValueChange, disabled, name }: Radi
           </div>
           <input
             type="radio"
-            className="sr-only"
+            className="sr-only focus-visible:outline-none"
             name={name}
             value={item.value}
             checked={value === item.value}
             onChange={() => onValueChange(item.value)}
             disabled={disabled}
+            aria-label={item.label}
           />
           <span>{item.label}</span>
         </label>

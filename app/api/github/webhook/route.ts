@@ -16,8 +16,9 @@ if (!convexUrl) {
 const client = new ConvexHttpClient(convexUrl);
 
 export async function POST(req: Request) {
-  const signature = headers().get("x-hub-signature-256");
-  const event = headers().get("x-github-event");
+  const headersList = await headers();
+  const signature = headersList.get("x-hub-signature-256");
+  const event = headersList.get("x-github-event");
   const rawBody = await req.text();
 
   try {

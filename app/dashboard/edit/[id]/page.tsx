@@ -21,7 +21,7 @@ export default function EditChangelogPage() {
   const currentUser = useQuery(api.users.getCurrentUser);
   const data = useQuery(
     api.changelogs.getChangelogForEdit,
-    currentUser && postId ? { postId: postId as Id<"changelogs"> } : "skip"
+    currentUser && postId ? ({ postId: postId as Id<"changelogs"> } as any) : ("skip" as any)
   );
   const updateChangelog = useMutation(api.changelogs.updateChangelog);
   const publish = useMutation(api.changelogs.publishChangelog);
@@ -143,7 +143,7 @@ export default function EditChangelogPage() {
           )}
           <div className="flex flex-wrap gap-3">
             <Button
-              disabled={isSaving}
+              loading={isSaving}
               onClick={async () => {
                 setMutationError(null);
                 setIsSaving(true);
@@ -156,12 +156,13 @@ export default function EditChangelogPage() {
                   setIsSaving(false);
                 }
               }}
+              aria-label="Save changelog"
             >
               {isSaving ? "Saving…" : "Save"}
             </Button>
             {post.status === "published" ? (
               <Button
-                disabled={isPublishing}
+                loading={isPublishing}
                 onClick={async () => {
                   setMutationError(null);
                   setIsPublishing(true);
@@ -174,12 +175,13 @@ export default function EditChangelogPage() {
                     setIsPublishing(false);
                   }
                 }}
+                aria-label="Unpublish changelog"
               >
                 {isPublishing ? "Unpublishing…" : "Unpublish"}
               </Button>
             ) : (
               <Button
-                disabled={isPublishing}
+                loading={isPublishing}
                 onClick={async () => {
                   setMutationError(null);
                   setIsPublishing(true);
@@ -192,6 +194,7 @@ export default function EditChangelogPage() {
                     setIsPublishing(false);
                   }
                 }}
+                aria-label="Publish changelog"
               >
                 {isPublishing ? "Publishing…" : "Publish"}
               </Button>

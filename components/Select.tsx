@@ -13,6 +13,7 @@ interface SelectProps {
   onValueChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  "aria-label"?: string;
 }
 
 function handleValueChange(
@@ -25,14 +26,17 @@ function handleValueChange(
   };
 }
 
-export function Select({ items, value, onValueChange, placeholder = "Select...", disabled }: SelectProps) {
+export function Select({ items, value, onValueChange, placeholder = "Select...", disabled, "aria-label": ariaLabel }: SelectProps) {
   return (
     <BaseSelect.Root
       value={value}
       onValueChange={handleValueChange(onValueChange)}
       disabled={disabled}
     >
-      <BaseSelect.Trigger className="flex h-10 w-full cursor-pointer select-none items-center justify-between gap-2 border border-[var(--border)] bg-[var(--input-bg)] px-3 text-[0.75rem] text-[var(--fg)] outline-none transition-[border-color] duration-150 hover:border-[var(--fg)] focus-visible:border-[var(--accent)] data-[disabled]:cursor-not-allowed data-[popup-open]:border-[var(--fg)] data-[disabled]:opacity-40 data-[disabled]:hover:border-[var(--border)] sm:h-9">
+      <BaseSelect.Trigger 
+        className="flex h-10 w-full cursor-pointer select-none items-center justify-between gap-2 border border-[var(--border)] bg-[var(--input-bg)] px-3 text-[0.75rem] text-[var(--fg)] outline-none transition-[border-color] duration-150 hover:border-[var(--fg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-opacity-20 data-[disabled]:cursor-not-allowed data-[popup-open]:border-[var(--fg)] data-[disabled]:opacity-40 data-[disabled]:hover:border-[var(--border)] sm:h-9"
+        aria-label={ariaLabel}
+      >
         <BaseSelect.Value className="min-w-0 flex-1 truncate text-left data-[placeholder]:opacity-50" placeholder={placeholder} />
         <BaseSelect.Icon className="flex shrink-0 opacity-50">
           <ChevronIcon />

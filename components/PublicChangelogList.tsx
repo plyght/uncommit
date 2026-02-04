@@ -102,7 +102,7 @@ export function PublicChangelogList({ slug, customDomain }: Props) {
                       </Link>
                     </h2>
                     <p className="mt-3 text-[0.9rem] leading-[1.7] text-[var(--public-muted)]">
-                      {post.markdown.split("\n").find((line) => line.trim().length > 0) ?? "Read the full release note."}
+                      {post.markdown.split("\n").find((line: string) => line.trim().length > 0) ?? "Read the full release note."}
                     </p>
                     <div className="mt-4">
                       <Link className="text-[0.8rem] uppercase tracking-[0.3em] text-[var(--accent)]" href={slug ? `/${slug}/${post.slug}` : `/${post.slug}`}>

@@ -55,12 +55,12 @@ function LoginPage() {
         </header>
 
         <div className="flex flex-col items-center gap-3 sm:gap-4">
-          <Button onClick={() => void handleSignIn()} className="gap-2">
+          <Button onClick={() => void handleSignIn()} className="gap-2" aria-label="Sign in with GitHub">
             <GitHubIcon />
             Sign in with GitHub
           </Button>
           {isDev && (
-            <Button onClick={() => void handleDevSignIn()} className="gap-2">
+            <Button onClick={() => void handleDevSignIn()} className="gap-2" aria-label="Sign in with dev account">
               Dev Login (skip OAuth)
             </Button>
           )}
@@ -94,7 +94,7 @@ function DashboardPage() {
 
   const projectItems = useMemo(
     () =>
-      (repos ?? []).map((repo) => ({
+      (repos ?? []).map((repo: any) => ({
         value: `${repo.repoOwner}/${repo.repoName}`,
         label: `${repo.repoOwner}/${repo.repoName}`,
       })),
@@ -102,7 +102,7 @@ function DashboardPage() {
   );
 
   const activeRepoData = repos?.find(
-    (repo) => `${repo.repoOwner}/${repo.repoName}` === activeRepo
+    (repo: any) => `${repo.repoOwner}/${repo.repoName}` === activeRepo
   );
 
   if (repos === undefined) {
@@ -273,22 +273,32 @@ function ChangelogList({
 
   if (changelogs.length === 0) {
     return (
-      <div className="border border-[var(--border)] bg-[var(--card-bg)] p-6">
-        <p className="text-[0.8125rem] opacity-50">
-          No posts yet. They will appear here when version bumps are detected.
-        </p>
+      <div className="border border-[var(--border)] bg-[var(--card-bg)] p-8 text-center">
+        <div className="mx-auto max-w-md space-y-3">
+          <div className="text-[2.5rem] opacity-15" aria-hidden="true">📋</div>
+          <div>
+            <p className="text-[0.875rem] font-medium">No posts yet</p>
+            <p className="mt-2 text-[0.75rem] leading-relaxed opacity-60">
+              Posts will appear here automatically when version bumps are detected in your repository
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-2">
-      {changelogs.map((post) => (
+      {changelogs.map((post: any) => (
         <div
           key={post._id}
           className="flex items-center justify-between gap-2 border border-[var(--border)] bg-[var(--card-bg)] px-3 py-2.5 sm:gap-4 sm:px-4 sm:py-3"
         >
-          <Link href={`/dashboard/edit/${post._id}`} className="flex min-w-0 flex-col gap-0.5 transition-opacity hover:opacity-70">
+          <Link 
+            href={`/dashboard/edit/${post._id}`} 
+            className="flex min-w-0 flex-col gap-0.5 transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-opacity-50"
+            aria-label={`Edit ${post.title}`}
+          >
             <div className="truncate text-[0.75rem] sm:text-[0.8125rem]">{post.title}</div>
             <div className="flex items-center gap-1.5 text-[0.625rem] sm:gap-2 sm:text-[0.6875rem]">
               <span
@@ -306,24 +316,25 @@ function ChangelogList({
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <Link
               href={`/dashboard/edit/${post._id}`}
-              className="hidden text-[0.6875rem] underline underline-offset-4 opacity-70 hover:opacity-100 sm:block"
+              className="hidden text-[0.6875rem] underline underline-offset-4 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-opacity-50 sm:block"
+              aria-label={`Edit ${post.title}`}
             >
               Edit
             </Link>
             {post.status === "published" ? (
-              <Button onClick={() => void unpublish({ postId: post._id })}>
+              <Button onClick={() => void unpublish({ postId: post._id })} aria-label={`Unpublish ${post.title}`}>
                 Unpublish
               </Button>
             ) : (
-              <Button onClick={() => void publish({ postId: post._id })}>
+              <Button onClick={() => void publish({ postId: post._id })} aria-label={`Publish ${post.title}`}>
                 Publish
               </Button>
             )}
             <button
               type="button"
               onClick={() => void remove({ postId: post._id })}
-              className="opacity-50 transition-opacity hover:opacity-100"
-              aria-label="Delete"
+              aria-label={`Delete ${post.title}`}
+              className="flex h-8 w-8 items-center justify-center opacity-50 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-opacity-50"
             >
               <Trash2 size={14} />
             </button>

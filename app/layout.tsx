@@ -8,7 +8,7 @@ const productionUrl = "https://uncommit.sh";
 const title = "<uncommit/>";
 const description = "AI-generated release notes from your code";
 
-const getSiteUrl = () => {
+const getSiteUrl = async () => {
   const envUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_BASE_URL;
   if (envUrl) {
     if (envUrl.startsWith("http://") || envUrl.startsWith("https://")) {
@@ -25,7 +25,8 @@ const getSiteUrl = () => {
     return productionUrl;
   }
 
-  const host = headers().get("host");
+  const headersList = await headers();
+  const host = headersList.get("host");
   if (host) {
     return `http://${host}`;
   }
@@ -34,8 +35,8 @@ const getSiteUrl = () => {
   return `http://localhost:${port}`;
 };
 
-export const generateMetadata = (): Metadata => {
-  const siteUrl = getSiteUrl();
+export const generateMetadata = async (): Promise<Metadata> => {
+  const siteUrl = await getSiteUrl();
 
   return {
     title,
@@ -91,7 +92,7 @@ export default function RootLayout({
         <meta name="color-scheme" content="light dark" />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>{children as any}</Providers>
         <Analytics />
       </body>
     </html>

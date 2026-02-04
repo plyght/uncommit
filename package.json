@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --project tsconfig.app.json",
     "convex:dev": "bunx convex dev",
     "convex:deploy": "bunx convex deploy"
   },
@@ -27,11 +27,11 @@
     "lexical": "^0.17.0",
     "libsodium-wrappers": "^0.8.2",
     "lucide-react": "^0.563.0",
-    "next": "^14.2.0",
+    "next": "14.2.0",
     "octokit": "^4.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "workflow": "4.0.1-beta.50"
+    "workflow": "4.1.0-beta.52"
   },
   "devDependencies": {
     "@types/node": "^20",

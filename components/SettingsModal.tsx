@@ -54,11 +54,21 @@ export function SettingsModal({
   }, [subscription?.isActive]);
 
   useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [open, onClose]);
+
+  useEffect(() => {
     if (currentUser && open) {
       setLoadingRepos(true);
       fetchRepos({})
         .then(setRepos)
-        .catch((err) => {
+        .catch((err: unknown) => {
           if (err instanceof Error && err.message.includes("TOKEN_REVOKED")) {
             void signOut();
             return;
@@ -84,7 +94,7 @@ export function SettingsModal({
     }
 
     const selected = userRepos.find(
-      (repo) => `${repo.repoOwner}/${repo.repoName}` === selectedRepo
+      (repo: any) => `${repo.repoOwner}/${repo.repoName}` === selectedRepo
     );
 
     if (selected) {
@@ -153,24 +163,27 @@ export function SettingsModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--fg)]/20 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--fg)]/20 backdrop-blur-sm transition-opacity duration-200 animate-in fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
     >
-      <div className="relative max-h-[100dvh] w-full max-w-[480px] overflow-y-auto border border-[var(--border)] bg-[var(--bg)] p-4 shadow-lg sm:max-h-[90vh] sm:p-6">
+      <div className="relative max-h-[100dvh] w-full max-w-[480px] overflow-y-auto border border-[var(--border)] bg-[var(--bg)] p-4 shadow-lg transition-transform duration-200 animate-in zoom-in-95 sm:max-h-[90vh] sm:p-6">
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 p-1 opacity-50 hover:opacity-100 sm:right-4 sm:top-4"
-          aria-label="Close"
+          className="absolute right-3 top-3 p-1 opacity-50 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-opacity-50 sm:right-4 sm:top-4"
+          aria-label="Close settings"
         >
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
         </button>
 
-        <h2 className="mb-4 text-[0.9375rem] font-semibold sm:mb-6 sm:text-[1rem]">
+        <h2 id="modal-title" className="mb-4 text-[0.9375rem] font-semibold sm:mb-6 sm:text-[1rem]">
           {mode === "add" ? "Add repository" : "Settings"}
         </h2>
 
@@ -210,8 +223,10 @@ export function SettingsModal({
 
               <Button
                 onClick={handleSave}
-                disabled={!selectedRepo || loading}
+                disabled={!selectedRepo}
+                loading={loading}
                 fullWidth
+                aria-label="Add repository"
               >
                 {loading ? "Adding…" : "Add repository"}
               </Button>
@@ -402,8 +417,10 @@ export function SettingsModal({
 
               <Button
                 onClick={handleSave}
-                disabled={!selectedRepo || loading}
+                disabled={!selectedRepo}
+                loading={loading}
                 fullWidth
+                aria-label="Save repository settings"
               >
                 {loading ? "Saving…" : "Save"}
               </Button>

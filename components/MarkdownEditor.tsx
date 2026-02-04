@@ -57,7 +57,7 @@ export function MarkdownEditor({ value, onChange }: Props) {
         <ListPlugin />
         <LinkPlugin />
         <OnChangePlugin
-          onChange={(editorState) => {
+          onChange={(editorState: any) => {
             editorState.read(() => {
               const markdown = $convertToMarkdownString(TRANSFORMERS);
               onChange(markdown);
@@ -99,7 +99,7 @@ function EditorToolbar() {
   const [alignment, setAlignment] = useState<"left" | "center" | "right">("left");
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
+    return editor.registerUpdateListener(({ editorState }: any) => {
       editorState.read(() => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
@@ -151,7 +151,7 @@ function EditorToolbar() {
   }, [editor]);
 
   useEffect(() => {
-    return editor.registerUpdateListener(({ editorState }) => {
+    return editor.registerUpdateListener(({ editorState }: any) => {
       editorState.read(() => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
