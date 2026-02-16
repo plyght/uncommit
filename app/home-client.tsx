@@ -179,18 +179,10 @@ function DashboardPage() {
               {subscription?.isActive ? (
                 <span className="opacity-30">Pro</span>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const w = 480, h = 720;
-                    const left = (screen.width - w) / 2;
-                    const top = (screen.height - h) / 2;
-                    window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
-                  }}
-                  className="py-1 opacity-50 transition-opacity duration-150 hover:opacity-100"
-                >
-                  Upgrade →
-                </button>
+                <span className="inline-flex items-center gap-1.5 rounded-[var(--radius)] border border-[var(--accent-subtle)] bg-[var(--accent-subtle)] px-2 py-0.5 text-[0.625rem] text-[var(--accent)]">
+                  <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-[var(--accent)]" />
+                  Pro coming soon
+                </span>
               )}
               {repos.length > 0 && !devShowEmpty && (
                 <button

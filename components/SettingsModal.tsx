@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -8,8 +8,7 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { RadioGroup } from "@/components/RadioGroup";
-import { PricingSlider } from "@/components/PricingSlider";
-import { PRICING_TIERS } from "@/lib/pricing";
+
 
 type SettingsModalProps = {
   open: boolean;
@@ -36,7 +35,6 @@ export function SettingsModal({
   const [repos, setRepos] = useState<Array<{ owner: string; name: string; fullName: string; id?: number }>>([]);
   const [customDomain, setCustomDomain] = useState("");
   const [apiKeyMode, setApiKeyMode] = useState<"byok" | "managed">("byok");
-  const [selectedVersions, setSelectedVersions] = useState(5);
   const [versionStrategy, setVersionStrategy] = useState<"any" | "major-only">("any");
   const [publishMode, setPublishMode] = useState<"auto" | "draft">("draft");
   const [versionSource, setVersionSource] = useState<"auto" | "uncommit">("auto");
@@ -44,15 +42,6 @@ export function SettingsModal({
   const [loadingRepos, setLoadingRepos] = useState(true);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [setupSaved, setSetupSaved] = useState(false);
-  const paymentPopup = useRef<Window | null>(null);
-
-  useEffect(() => {
-    if (subscription?.isActive && paymentPopup.current && !paymentPopup.current.closed) {
-      paymentPopup.current.close();
-      paymentPopup.current = null;
-    }
-  }, [subscription?.isActive]);
-
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && open) {
@@ -291,27 +280,13 @@ export function SettingsModal({
                         </div>
                       </>
                     ) : (
-                      <>
-                        <div className="mb-3 font-medium opacity-90">Choose your tier:</div>
-                        <PricingSlider
-                          value={selectedVersions}
-                          onValueChange={setSelectedVersions}
-                          disabled={loading}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const selectedTier = PRICING_TIERS.find((t) => t.versions === selectedVersions);
-                            const w = 480, h = 720;
-                            const left = (screen.width - w) / 2;
-                            const top = (screen.height - h) / 2;
-                            paymentPopup.current = window.open("https://ko-fi.com/uncommit", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
-                          }}
-                          className="mt-4 flex h-8 w-full items-center justify-center border border-[var(--border)] bg-[var(--bg)] text-[0.6875rem] font-medium transition-opacity hover:opacity-70"
-                        >
-                          Subscribe on Ko-fi →
-                        </button>
-                      </>
+                      <div className="flex flex-col items-center gap-2 py-2 text-center">
+                        <span className="inline-flex items-center gap-1.5 rounded-[var(--radius)] border border-[var(--accent-subtle)] bg-[var(--accent-subtle)] px-2.5 py-1 text-[0.6875rem] font-medium text-[var(--accent)]">
+                          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--accent)]" />
+                          Coming soon
+                        </span>
+                        <p className="text-[0.625rem] opacity-50">Managed hosting with rate-limited tiers is on the way.</p>
+                      </div>
                     )}
                   </div>
                 )}
@@ -330,19 +305,13 @@ export function SettingsModal({
                     disabled={loading}
                   />
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const w = 480, h = 720;
-                      const left = (screen.width - w) / 2;
-                      const top = (screen.height - h) / 2;
-                      paymentPopup.current = window.open("https://ko-fi.com/summary/184d3369-9f68-4a3a-8094-d1310fb4263b", "kofi", `width=${w},height=${h},left=${left},top=${top}`);
-                    }}
-                    className="flex h-10 items-center justify-between border border-[var(--border)] bg-[var(--card-bg)] px-3 text-[0.75rem] opacity-60 transition-opacity hover:opacity-100 sm:h-9"
-                  >
-                    <span className="opacity-50">Upgrade to use custom domain</span>
-                    <span>$15/mo →</span>
-                  </button>
+                  <div className="flex h-10 items-center justify-between border border-dashed border-[var(--border)] bg-[var(--card-bg)] px-3 sm:h-9">
+                    <span className="text-[0.6875rem] opacity-40">Custom domains require Pro</span>
+                    <span className="inline-flex items-center gap-1 rounded-[var(--radius)] border border-[var(--accent-subtle)] bg-[var(--accent-subtle)] px-1.5 py-0.5 text-[0.5625rem] text-[var(--accent)]">
+                      <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-[var(--accent)]" />
+                      Soon
+                    </span>
+                  </div>
                 )}
               </div>
 
